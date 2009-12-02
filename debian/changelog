@@ -15,7 +15,7 @@ wapua (0.06.1-1) unstable; urgency=low
     + [debian/rules] debian-rules-ignores-make-clean-error
   * [debian/copyright] Updated URL of upstream homepage
 
- -- Axel Beckert <abe@deuxchevaux.org>  Wed, 02 Dec 2009 15:12:48 +0100
+ -- Axel Beckert <abe@deuxchevaux.org>  Wed, 02 Dec 2009 18:04:07 +0100
 
 wapua (0.06-1.1) unstable; urgency=low
 
