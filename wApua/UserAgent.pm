@@ -33,7 +33,7 @@ use LWP::UserAgent;
 use LWP::MediaTypes qw(add_type);
 use Tk::DialogBox;
 
-sub new { 
+sub new {
     my $self = new LWP::UserAgent;
     shift;
     # I hate OS names written all in lower case... *g*

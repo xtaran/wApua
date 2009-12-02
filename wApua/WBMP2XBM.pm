@@ -33,7 +33,7 @@ use strict;
 
 sub new {
     shift;
-    my $self             = {};
+    my $self	     = {};
     $self->{wbmp_string} = shift;
     $self->{image_name}  = (@_ ? shift : "WBMPtoXBM");
     $self->{width}       = 0;
@@ -78,14 +78,14 @@ sub convert { # the converter itself, returns 0 if an error occured
     my $wbmp = $self->{wbmp_string};
     if (length $wbmp) {
 	my ($data, $rest) = &nextdata($wbmp); $wbmp = $rest;
-	print STDERR "WBMP Type: $data" if $debug >= 1; 
+	print STDERR "WBMP Type: $data" if $debug >= 1;
 	if ($data != 0) {
 	    warn "\nUnsupported WBMP type";
 	    return 0;
 	}
 	print STDERR " -- OK.\n" if $debug >= 1;
 	($data, $rest) = &nextdata($wbmp); $wbmp = $rest;
-	print STDERR "WBMP FixHeader: $data" if $debug >= 1; 
+	print STDERR "WBMP FixHeader: $data" if $debug >= 1;
 	if ($data != 0) {
 	    warn "\nUnsupported or wrong WBMP type (Extended headers are unsupported.)";
 	    return 0;
@@ -100,14 +100,14 @@ sub convert { # the converter itself, returns 0 if an error occured
 	my $woctets = ($width >> 3) + (($width % 8)?1:0);
 	my $octetrest = $width%8;
 	$octetrest = ($octetrest==0?8:$octetrest);
-	print STDERR "Image dimension: ${width}x$height ($woctets octets per row)\n" 
+	print STDERR "Image dimension: ${width}x$height ($woctets octets per row)\n"
 	    if $debug >= 1;
-	
-	$self->{xbm_string} = 
+
+	$self->{xbm_string} =
 	    ("#define ".$self->{image_name}."_width $width\n".
 	     "#define ".$self->{image_name}."_height $height\n".
 	     "static char ".$self->{image_name}."_bits[] = {\n ");
-	
+
 	my $xbmcol = 0;
 	my $col = 0;
 	while (length($wbmp) > 0) {
@@ -115,11 +115,11 @@ sub convert { # the converter itself, returns 0 if an error occured
 	    $col++;
 	    $data = ord(substr($wbmp,0,1));
 	    $wbmp = substr($wbmp,1);
-	    $self->{xbm_string} .= sprintf(" 0x%.2x,",&little_big($data)^0xff); 
+	    $self->{xbm_string} .= sprintf(" 0x%.2x,",&little_big($data)^0xff);
 	    if ($xbmcol > 11) {
 		$self->{xbm_string} .=  " \n ";
 		$xbmcol = 0;
-	    }		    
+	    }
 	}
 	$self->{xbm_string} .=  " };\n";
 	return $self->{xbm_string};
@@ -131,7 +131,7 @@ sub convert { # the converter itself, returns 0 if an error occured
 ### Subroutines
 
 sub little_big { # converts little endian 8bit integers into big
-                 # endian ones (and vice versa of course ;-)
+		 # endian ones (and vice versa of course ;-)
     my $in = shift;
     my $out = 0;
     my $i;
@@ -141,7 +141,7 @@ sub little_big { # converts little endian 8bit integers into big
 	    #print "|";
 	} else {
 	    #print "-";
-	}    
+	}
     }
     #print "\n";
     return $out;
@@ -157,7 +157,7 @@ sub header { # reads one byte of some multibyte integer according to WAE
 }
 
 sub nextdata { # returns the next multibyte integer of the given
-               # string and the rest of the string
+	       # string and the rest of the string
    my $string = shift;
     my $cont = 1;
     my $value;

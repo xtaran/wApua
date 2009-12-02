@@ -212,7 +212,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02111-1301, USA.
 </p><p>
 
 You can reach the author by <a href='about:#author'>snail-mail and e-mail</a>.
- 
+
 </p></small></card><card id='author' title='wApua Author'><p>
 
 <big><u>Author of $version</u></big>
@@ -319,7 +319,7 @@ EOF
 EOF
 
     foreach my $url (sort $cache->getURLs()) {
-	my $timestring = ($cache->getLastModified($url) ? 
+	my $timestring = ($cache->getLastModified($url) ?
 			  localtime($cache->getLastModified($url)) :
 			  "[Unknown]");
 	#print STDERR "CACHE($url): ".$cache->getCachedContent($url)."\n";

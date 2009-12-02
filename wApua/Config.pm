@@ -49,7 +49,7 @@ sub readConfig {
     my %CONFIG;
 
     # Initial configuration
-    
+
 # Proxy configuration only via environment variables at the
 # moment. From the LWP::UserAgent man page:
 
@@ -83,9 +83,9 @@ sub readConfig {
     $CONFIG{DefaultModKey} = "Command" if ($ eq "MacOS");
 
     $CONFIG{HelpKey} = "Help";
-    $CONFIG{HelpKey} = "F1" if ($ eq "MSWin32"); 
-    $CONFIG{HelpKey} = "F1" if ($ eq "MacOS"); 
-        # Anyone knows what keysym some key for help on Macs has?
+    $CONFIG{HelpKey} = "F1" if ($ eq "MSWin32");
+    $CONFIG{HelpKey} = "F1" if ($ eq "MacOS");
+	# Anyone knows what keysym some key for help on Macs has?
 
 # Fonts
     $CONFIG{FontFamily} = "helvetica";
@@ -129,8 +129,8 @@ sub readConfig {
     $CONFIG{StopButton} = "stop.wbmp";
     $CONFIG{LogoButton} = "wApua.wbmp";
     $CONFIG{LogoURL} = "http://fsinfo.noone.org/~abe/wApua/index.wml";
-    $CONFIG{ButtonDirectory} = "wApua/images"; 
-        # Use absolute for paths outside @INC;
+    $CONFIG{ButtonDirectory} = "wApua/images";
+	# Use absolute for paths outside @INC;
 
 # Colors, program
     $CONFIG{Background} = '#808080';
@@ -164,7 +164,7 @@ sub readConfig {
 
 # Start URL and HTTP headers
     $CONFIG{HomeURL} = "http://fsinfo.noone.org/~abe/wApua/index.wml";
-    $CONFIG{HTTP_Accept} = 
+    $CONFIG{HTTP_Accept} =
 	"text/vnd.wap.wml; q=1.0, text/plain; q=0.5, image/vnd.wap.wbmp; level=0";
     $CONFIG{HTTP_Accept_Image} = "image/vnd.wap.wbmp; level=0";
 
@@ -198,8 +198,8 @@ sub readConfig {
 	}
 	close CF;
     } else {
-	print STDERR 
-	    "No configuration file found. Using default configuration...\n" 
+	print STDERR
+	    "No configuration file found. Using default configuration...\n"
 	    if $debug >= 1;
     }
 
@@ -241,7 +241,7 @@ sub getConfigFile {
 Usage: $0 [-f configfile] [-d debuglevel|--debug=debuglevel] [starturl]
        $0 (-h|--help|--usage)
 EOT
-            exit 0;
+	    exit 0;
 	} else {
 	    push(@commandline, $_);
 	}
@@ -271,7 +271,7 @@ EOT
 	    }
 	    #print STDERR "No, not the right one...\n";
 	}
-    } 
+    }
     return $self->{configfile};
 }
 

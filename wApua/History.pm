@@ -31,7 +31,7 @@ use strict;
 
 sub new {
     shift;
-    my $self        = {};
+    my $self	= {};
     $self->{point}  = -1;
     $self->{url}    = [];
     $self->{getabs} = 0;
@@ -70,31 +70,31 @@ sub size { # get the size of the history
 }
 
 sub last { # returns the URL, back would go to, without changing any data
-           # returns 0, if the end of history is reached
+	   # returns 0, if the end of history is reached
     my $self = shift;
     my $id = $self->{point}-1;
     return ($id < 0 ? 0 : $ {$self->{url}}[$id]);
 }
 
 sub next { # returns the URL, forward would go to, without changing any data
-           # returns 0, if the end of history is reached
+	   # returns 0, if the end of history is reached
     my $self = shift;
     my $id = $self->{point}+1;
     return ($id >= scalar @{$self->{url}} ? 0 : $ {$self->{url}}[$id]);
 }
 
 sub top { # returns the top-most URL, without changing any data
-          # returns 0, if the history is empty
+	  # returns 0, if the history is empty
     my $self = shift;
     return ($self->{point} < 0 ? 0 : $ {$self->{url}}[$self->{point}]);
 }
 
 sub title { # returns the top-most URL, without changing any data
-            # returns 0, if the history is empty
+	    # returns 0, if the history is empty
     my $self = shift;
     my $url = shift;
-    return ${$self->{title}}{$url} 
-        if defined ${$self->{title}}{$url};
+    return ${$self->{title}}{$url}
+	if defined ${$self->{title}}{$url};
 }
 
 sub back { # goes backward in history and returns the last URL used.
@@ -146,16 +146,16 @@ sub allHistory { # returns all pages in history
     return @{$self->{url}};
 }
 
-sub get { # get the history entry (absolute or relative to the actual), 
-          # it returns 0, if the parameter is out of the scope of history
+sub get { # get the history entry (absolute or relative to the actual),
+	  # it returns 0, if the parameter is out of the scope of history
     my $self = shift;
     my $id = ($self->{getabs}?shift:$self->{point}+shift);
-    return (($id < 0) || ($id >= scalar @{$self->{url}}) ? 
+    return (($id < 0) || ($id >= scalar @{$self->{url}}) ?
 	    0 : $ {$self->{url}}[$id]);
 }
 
 sub set { # changes the actual URL (e.g. after some redirect), returns
-          # old URL
+	  # old URL
     my $self = shift;
     my $old = ${$self->{url}}[$self->{point}];
     ${$self->{url}}[$self->{point}] = shift;
@@ -172,12 +172,12 @@ sub settitle { # changes the actual title and returns old one
     return $old;
 }
 
-sub absolute { # get or set if get interprets parameters relative 
-               # (default) or absolute.
+sub absolute { # get or set if get interprets parameters relative
+	       # (default) or absolute.
     my $self = shift;
     if (@_) {
 	$self->{getabs} = shift;
-    } 
+    }
     return $self->{getabs};
 }
 
@@ -196,11 +196,11 @@ sub update_menu {
 					  $self->title($_) : $_),
 			       %{$self->{menucolors}},
 			       -accelerator => $bar+1,
-			       -command     => sub { 
+			       -command     => sub {
 				   $self->pos($bar);
 				   $self->{fwd}->configure(-state => "normal")
 				       if $self->next;
-				   &{$self->{fetch}}($foo,0); 
+				   &{$self->{fetch}}($foo,0);
 			       }
 			       );
 	$i++;
@@ -223,7 +223,7 @@ sub pos { # get or set the actual page id in history
     my $self = shift;
     if (@_) {
 	$self->{point} = shift;
-    } 
+    }
     return $self->{point};
 }
 

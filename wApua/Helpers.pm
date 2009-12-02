@@ -135,7 +135,7 @@ sub preparser {
 	$seite = "$'";
 
 	if ($& =~ /^<pre/) {
-	    $newseite .= 
+	    $newseite .=
 		&parsespaces(&parseentities($before)).
 		&parseentities($match);
 	} else {
@@ -174,7 +174,7 @@ sub syntaxignore {
 }
 
 sub showSource {
-    print shift; 
+    print shift;
 }
 
 1;
