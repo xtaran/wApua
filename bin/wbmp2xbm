@@ -79,7 +79,7 @@ foreach (@ARGV) {
     my $filebasename = $_;
     $filebasename =~ s/\.wbmp$//i;
     my $xbmfile = $filebasename.".xbm";
-	
+
     open(WBMP, '<', $wbmpfile) or die "Can't open $_ for reading";
 
     my $wbmp = "";
@@ -97,7 +97,7 @@ foreach (@ARGV) {
     print XBM $wbmpObj->xbm;
 
     close XBM;
-    close WBMP;	
+    close WBMP;
 }
 
 __END__

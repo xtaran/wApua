@@ -7,6 +7,7 @@
   + Fixed POD errors in wApua and wbmp2xpm
   + Minor cosmetic changes to unify comments, e-mail addresss and
     copyright statements
+  + Removed trailing and leading whitespaces
 
 0.05.1 to 0.06:
 
