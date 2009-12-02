@@ -6,7 +6,7 @@ use ExtUtils::MakeMaker;
 
 sub MY::postamble {
     '
-emacs: 
+emacs:
 	emacs Makefile.PL MANIFEST README CHANGES INSTALL wApua.rc wApua/*.pm bin/wApua bin/*.pl &
 ';
 }
@@ -25,6 +25,6 @@ WriteMakefile(
                       'HTML::TokeParser' => undef,
                       'Tk'               => "800.000",
                       'Tk::ROText'       => undef },
-   dist          => { COMPRESS => 'gzip -9f', 
+   dist          => { COMPRESS => 'gzip -9f',
 		      SUFFIX => '.gz' }
 );
