@@ -1,6 +1,6 @@
 package wApua::WBMP2XBM;
 
-# Copyright (c) 2000, 2006 by Axel Beckert <abe@deuxchevaux.org>
+# Copyright (C) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
