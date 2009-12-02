@@ -1,0 +1,1 @@
+?package(wapua):needs="X11" section="Apps/Net" title="wApua" command="/usr/bin/wApua"

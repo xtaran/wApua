@@ -1,0 +1,70 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DESTDIR=$(CURDIR)/debian/wapua
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	perl Makefile.PL INSTALLDIRS=vendor
+
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: configure-stamp 
+	dh_testdir
+
+	$(MAKE)
+
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+
+	-$(MAKE) clean
+	rm -f Makefile Makefile.old
+
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+
+	$(MAKE) install DESTDIR=$(DESTDIR)
+	# Remove directories unnecessarily created by ExtUtils::MakeMaker
+	rmdir $(DESTDIR)/usr/lib/perl5 $(DESTDIR)/usr/lib
+
+# Build architecture-independent files
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs CHANGES
+	dh_installdocs README
+	dh_installexamples wApua.rc
+	dh_installmenu
+	dh_installman
+	dh_link usr/bin/wApua usr/bin/wapua \
+		usr/share/man/man1/wApua.1p.gz usr/share/man/man1/wapua.1p.gz
+	dh_compress
+	dh_fixperms
+	dh_perl
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture-dependent files
+binary-arch: build install
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure
