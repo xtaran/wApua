@@ -28,7 +28,7 @@ clean:
 	dh_testroot
 	rm -f build-stamp configure-stamp
 
-	-$(MAKE) clean
+	[ ! -f Makefile ] || $(MAKE) clean
 	rm -f Makefile Makefile.old
 
 	dh_clean 
