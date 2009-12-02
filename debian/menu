@@ -1,1 +1,1 @@
-?package(wapua):needs="X11" section="Apps/Net" title="wApua" command="/usr/bin/wApua"
+?package(wapua):needs="X11" section="Applications/Network/Web Browsing" title="wApua" command="/usr/bin/wApua"

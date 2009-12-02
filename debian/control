@@ -2,8 +2,11 @@ Source: wapua
 Section: web
 Priority: optional
 Maintainer: Axel Beckert <abe@deuxchevaux.org>
-Build-Depends: debhelper (>= 4.0.0), perl (>= 5.6.0-16)
-Standards-Version: 3.7.2
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.8.3
+Homepage: http://fsinfo.noone.org/~abe/wApua/
+Vcs-Browser: http://git.noone.org/?p=wapua.git
+Vcs-Git: http://git.noone.org/wapua.git/
 
 Package: wapua
 Architecture: all
