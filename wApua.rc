@@ -1,0 +1,28 @@
+# wApua Configuration file
+#
+# Copy this file to your home directory, rename it into .wApua.rc and
+# edit it according to your preferences
+
+HTTP_Accept_Charset: iso-8859-1; q=1, unicode-1-1; q=0.8
+HTTP_Accept_Language: de; q=1.0, en-gb; q=0.9, en; q=0.8, en-us; q=0.7, nl; q=0.2, fr; q=0.1
+
+HomeURL: http://fsinfo.cs.uni-sb.de/~abe/Links/index.wml
+
+Debug: No
+TextButtons: No
+
+Foreground: #000000
+Background: #FFFFFF
+WAPForeground: #000000
+WAPBackground: #FFFFFF
+LinkForeground: #FF0000
+LinkBackground: #FFFFFF
+HoverForeground: #FFFFFF
+HoverBackground: #FF0000
+HoverBorderType: flat
+ActiveForeground: #000000
+ActiveBackground: #FF0000
+ErrorBackground: #FF0000
+ErrorForeground: #FFFFFF
+
+CarriageReturnAfterLink: Yes

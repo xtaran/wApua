@@ -1,0 +1,134 @@
+----------------------------------------------------------------------
+			   wApua ChangeLog
+----------------------------------------------------------------------
+
+0.05.1 to 0.06:
+
+  + Slight overhaul over nearly all files
+  + Removed a lot of debug output which was printed anyway, added 
+    debug flags -d and --debug. Use -d 1 for previous default 
+    behaviour.
+  + wApua now is more pedantic about command line options and shows a 
+    short help if called with -h, --help or --usage. Same for
+    wbmp2xbm.pl.
+  + wApua now optionally (see example config) inserts a line break
+    after each link, like the Nokia 6210 does.
+  + Small modifications to Makefile.PL including 'make emacs' support
+    ;-)
+  + Small cosmetic modifications to README and INSTALL
+  + DOCTYPE string parsing now knows more valid variations.
+  + Ability to show loaded perl libraries
+  + Bugfix: "view source" works again
+  + Renaming wbmp2xbm.pl to wbmp2xbm
+  + Clean initialisation of debug flag in wApua::WBMP2XBM
+  + Input sanitizing, --debug and --verbose flag for wbmp2xbm
+  + POD documentation
+
+0.05dev to 0.05.1:
+
+  + Compatibiliy with newer Tk versions, especially 804.027 and above
+  + Documentation bugfix for how to install it locally
+  + Address change in the license
+
+0.04dev to 0.05dev:
+
+  + wApua now reads config files on startup and has much more
+    configuration possibilities. For this reason also some default
+    values have changed (Home page, HTTP Accept-Languages header, etc.).
+  + Added a simple authentication dialog.
+  + Added a simple phone URL decoder.
+  + Added a right-click popup menu, which needs no further mouse
+    movement to activate the history back function
+  + Added a stop button. 
+  + Added (WBMP based) bitmap navigation buttons. (The old text
+    navigation buttons are still available, just say "TextButtons:
+    true" in your ~/.wApua.rc
+  + If appropriate, the status bar shows number of cards in the actual
+    deck or image dimensions.
+  + Different HTTP Accept headers for images and other files.
+  + wApua now uses the xml_mode feature of HTML::Parser. So since now
+    at least HTML::Parser 3.00 (more precisely 2.99_06  :-) is necessary.
+  + Added again more informations (mostly used module versions) to the
+    internal page "about:#info"
+  + Added the wApua logo to the main "about:#index" page.
+  + The User-Agent header now conatins more information:
+    - wApua version (now with "/" instead of " " as delimiter)
+    - PERL version
+    - libwww-perl version
+    - perl/Tk version
+    - Value of $^O
+  + wApua::UserAgent now is a specialization of LWP::UserAgent
+  + Added the wApua logo in the lower right corner of the browser
+    window. A click on the logo gets you to the wApua home page.
+  + Fixed some minor bugs:
+    - Local images (URLs with file:/) are no more cached.
+    - Fixed compilation problems under PERL versions lesser than
+      5.006.
+    - Several bugs concerning history and/or forward/back buttons.
+    - Links in tables now set the cursor right.
+  + Improved "busy state".
+  + Improved (re-)initialising of the "do buttons".
+  + History-Back and -Forward functions now ring a bell, if they're
+    invoked (e.g. via key bindings) and a history movement in that
+    direction isn't possible.
+  + Main and history menu now write something into the state line.
+  + Some code clean up/improvements.
+  + MainWindow is coming up much earlier now.
+  + Fixed again some more bugs in key bindings.
+  + Updated a lot in the README file.
+ 
+0.03dev to 0.04dev:
+
+  + Changed the name from "wApua.pl" to "wApua".
+  + Added a RAM cache.
+  + Added the internal page "about:#cache", which shows which pages
+    are cached. It is also accessible via menu.
+  + Comfortable installation via MakeMaker
+  + Added a key bindings help page called "about:#keys", which replaced
+    "about:#index" in the menu.
+  + Fixed again some more bugs in key bindings.
+  + Improved WBMP support:
+    - Error messages are shown in the browser if some image file
+      doesn't exist or isn't a supported WBMP file.
+    - The image dimension is shown, when the mouse is over some WBMP
+      image.
+  + Several minor bug fixes:
+    - When loading some WML page with inline WBMPs, now the deck size
+      (shown in the status line) is really the deck size and not the
+      size of the last image loaded, as before.
+    - Entities in labels of do-buttons are no more ignored.
+    - Removed wrong data description in about:#info
+    - The text cursor doesn't appear anymore in the text window.
+    - The cursor in text window now displays the right cursor, also if
+      some link was highlighted in the meantime. It also has now the
+      $textcursor initially instead of $normalcursor.
+    - After hitting enter in the location field, the focus goes back
+      to the text window.
+  + Changed the default size from 420x260 to 420x360
+  + Improved internal pages "about:#info" and "about:#env" (now using
+    tables)
+  + Some performance improvements
+  + Added an INSTALL file
+
+0.02dev to 0.03dev:
+
+  + Some minor bugfixes on doctype string parsing and menus
+  + Added WBMP (Type 0) support and an WBMP to XBM converter for
+    command line use
+  + Added timer support
+  + Added "Show source" function.
+  + Fixed some more bugs in key bindings
+
+0.01dev to 0.02dev:
+
+  + Added proxy support via environment variables
+  + Fixed bug in MS-Windows and MacOS key bindings
+  + Added a README file :-)
+
+0.01dev: 
+
+  + Initial release.
+
+# Local Variables: 
+# mode: text
+# End: 

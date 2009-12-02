@@ -1,0 +1,1791 @@
+#!/usr/bin/perl
+
+package wApua;
+
+my # splitted line for MakeMaker
+$VERSION = "0.06";
+
+# Copyright (c) 2000, 2006 by Axel Beckert <wapua@deuxchevaux.org>
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02111-1301, USA.
+#
+# You can reach the author by snail-mail at the following address:
+#
+#  Axel Beckert
+#  Kuerbergstrasse 20
+#  8049 Zurich, Switzerland
+
+use strict;
+
+use wApua::UserAgent;
+use wApua::History;
+use wApua::Cache;
+use wApua::WBMP2XBM;
+use wApua::About;
+use wApua::Phone;
+use wApua::Config;
+use wApua::Helpers;
+
+use Tk;
+use Tk::ROText;
+
+use HTML::TokeParser;
+use URI;
+use URI::Escape;
+use URI::Heuristic;
+use URI::file;
+
+
+### Initialation
+my $config = new wApua::Config;
+my %CONFIG = $config->readConfig;
+
+my $debug = $CONFIG{Debug};
+$| = $debug;
+
+my @co = (-background => $CONFIG{Background},
+	  -foreground => $CONFIG{Foreground});
+my @ci = (-background => $CONFIG{WAPBackground},
+	  -foreground => $CONFIG{WAPForeground});
+my $cib = $CONFIG{WAPBackground};
+my @cl = (-background => $CONFIG{LinkBackground},
+	  -foreground => $CONFIG{LinkForeground});
+my @ca = (-background => $CONFIG{HoverBackground},
+	  -foreground => $CONFIG{HoverForeground});
+my @ce = (-background => $CONFIG{ErrorBackground},
+	  -foreground => $CONFIG{ErrorForeground});
+
+my $lbw  = $CONFIG{LinkBorderWidth};
+my $lhbw = $CONFIG{HoverBorderWidth};
+my $lbt  = $CONFIG{LinkBorderType};
+my $lhbt = $CONFIG{HoverBorderType};
+
+my @modkeylist = split(" ",$CONFIG{ModKeys});
+my $default_modkey = $CONFIG{DefaultModKey};
+my $helpkey = $CONFIG{HelpKey};
+my $noKPkeysyms = $CONFIG{NoKPKeySyms};
+
+my $homeurl = $CONFIG{HomeURL};
+
+my @activecolors = (-activeforeground => $CONFIG{ActiveForeground},
+		    -activebackground => $CONFIG{ActiveBackground});
+my @menucolors = (@activecolors, @co);
+
+my @padding = (-highlightbackground => $CONFIG{Background},
+	       -highlightcolor => $CONFIG{Foreground},
+	       -highlightthickness => 1,
+	       -borderwidth => $CONFIG{BorderWidth});
+my @buttonpadding = (-padx => 3, -pady => 3,
+		     @activecolors, @padding);
+my @textpadding = (-selectforeground => $CONFIG{ActiveForeground},
+		   -selectbackground => $CONFIG{ActiveBackground},
+		   -selectborderwidth => $CONFIG{ActiveBorderWidth});
+my @fieldpadding = (@textpadding, @padding);
+my $starturl = scalar @ARGV ? $ARGV[0] : $CONFIG{HomeURL};
+my ($acturl,$url) = ($starturl,$starturl);
+
+my %fontsizes = (-2 => $CONFIG{'FontSize-2'},
+		 -1 => $CONFIG{'FontSize-1'},
+		  0 => $CONFIG{'FontSize0'},
+		  1 => $CONFIG{'FontSize+1'},
+		  2 => $CONFIG{'FontSize+2'});
+
+my $fontfamily = $CONFIG{FontFamily};
+my $ttfontfamily = $CONFIG{TTFontFamily};
+my $softbuttonfont = $CONFIG{SoftButtonFont};
+
+my $textcursor = $CONFIG{TextCursor};
+my $waitcursor = $CONFIG{WaitCursor};
+my $normalcursor = $CONFIG{NormalCursor};
+my $linkcursor = $CONFIG{LinkCursor};
+
+my $textbuttons = $CONFIG{TextButtons};
+
+
+my $version = "wApua $VERSION";
+my $uaversion = "wApua/$VERSION";
+my %state=();
+my $card;
+my $cardcounter = 0;
+my $content;
+my $wait = 0;
+my $stop = 0;
+my $source = "";
+my $timer_url = 0;
+my $timer_info = "";
+my $timer_id = 0;
+
+# Tk window
+my $window = MainWindow->new(@co, -takefocus => 0,
+			     -width => 420, -height => 360,
+			     -borderwidth => 2,
+			     -relief => "flat",
+			     -title => "$version - A WAP User Agent") ;
+$window->packPropagate(0);
+$window->update;
+
+# LWP UserAgent configuration partly moved to
+my $wapua = new wApua::UserAgent($uaversion);
+$wapua->timeout($CONFIG{TimeOut});
+
+my %HTTP_Headers;
+my %HTTP_Image_Headers;
+foreach my $key (keys %CONFIG) {
+    if ($key =~ /^HTTP_/) {
+	$HTTP_Headers{$'} = $CONFIG{$key} 
+	    unless $key eq "HTTP_Accept_Image";
+	$HTTP_Image_Headers{$'} = $CONFIG{$key} 
+	    unless $key =~ /^HTTP_Accept(_Image)?$/;
+	$HTTP_Image_Headers{Accept} = $CONFIG{$key} 
+	    if $key eq "HTTP_Accept_Image";
+    }
+}
+
+my $wapua_headers = new HTTP::Headers %HTTP_Headers;
+my $wapua_image_headers = new HTTP::Headers %HTTP_Image_Headers;
+
+# Generate font names
+my ($fsize,$bold,$uline,$fname,$ttname);
+
+foreach $fsize (keys %fontsizes) {
+    foreach $bold ("bold", "normal") {
+	$fname = "font=$fsize=$bold";
+	$ttname = "tt=$fsize=$bold";
+	$window->fontCreate($fname,
+			    -family => $fontfamily,
+			    -weight => $bold,
+			    -size => $fontsizes{$fsize});
+	$window->fontCreate($ttname,
+			    -family => $ttfontfamily,
+			    -weight => $bold,
+			    -size => $fontsizes{$fsize});
+    }
+}
+
+$window->fontCreate("error-normal",
+ 		    -family => $fontfamily,
+  		    -weight => "normal",
+  		    -size => $fontsizes{0});
+$window->fontCreate("error-bold",
+ 		    -family => $fontfamily,
+  		    -weight => "bold",
+  		    -size => $fontsizes{0});
+$window->fontCreate("error-small",
+ 		    -family => $fontfamily,
+  		    -weight => "bold",
+  		    -size => $fontsizes{-1});
+
+
+# Navigation bar
+my $navbar = $window->Frame(@co, -borderwidth => 0, -takefocus => 0);
+my $locbar = $window->Frame(@co, -borderwidth => 0, -takefocus => 0);
+$navbar->pack(-side => "top",
+	      -fill => "x",
+	      -padx => 2,
+	      -pady => 2);
+$locbar->pack(-side => "top",
+	      -fill => "x",
+	      -padx => 2,
+	      -pady => 2);
+
+# Buttons of the navigation bar
+
+my ($backbutton, $backxbm);
+
+unless ($textbuttons) {
+    # Find the back button image
+    open(WBMP,&findINC("$CONFIG{ButtonDirectory}/$CONFIG{BackButton}")) or 
+	warn "Can't find $CONFIG{ButtonDirectory}/$CONFIG{BackButton} in \@INC";
+    my $wbmp = "";
+    while (<WBMP>) {
+	$wbmp .= $_;
+    }
+    close(WBMP);
+    $backxbm = new wApua::WBMP2XBM($wbmp);
+}
+
+if ((!$textbuttons) && $backxbm->xbm) {
+    my $backImage = $navbar->Bitmap('back', @co, 
+				    -data => $backxbm->xbm,
+				    -maskdata => $backxbm->xbm);
+    $backbutton = $navbar->Button(-image => $backImage, 
+				  -width => 19,
+				  -command => \&back,
+				  @buttonpadding, @co);
+} else {
+    $backbutton = $navbar->Button(-text => '« Back', @co, @buttonpadding,
+				  -command => \&back);
+}
+
+$backbutton->pack(-side => 'left',
+		  -fill => "y");
+$backbutton->bind('<Any-Leave>' => \&blankState);
+$backbutton->bind('<Any-Enter>' =>  \&backState);
+
+my ($reloadbutton, $reloadxbm);
+
+unless ($textbuttons) {
+    # Find the reload button image
+    open(WBMP,&findINC("$CONFIG{ButtonDirectory}/$CONFIG{ReloadButton}")) or 
+	warn "Can't find $CONFIG{ButtonDirectory}/$CONFIG{ReloadButton} in \@INC";
+    my $wbmp = "";
+    while (<WBMP>) {
+	$wbmp .= $_;
+    }
+    close(WBMP);
+    $reloadxbm = new wApua::WBMP2XBM($wbmp);
+}
+
+if ((!$textbuttons) && $reloadxbm->xbm) {
+    my $reloadImage = $navbar->Bitmap('reload', 
+				      @co, 
+				      -data => $reloadxbm->xbm,
+				      -maskdata => $reloadxbm->xbm);
+    $reloadbutton = $navbar->Button(-image => $reloadImage, 
+				    -width => 19,
+				    -command => \&reload,
+				    @buttonpadding, @co);
+} else {
+    $reloadbutton = $navbar->Button(-text => 'Reload', @co, @buttonpadding,
+				  -command => \&reload);
+}
+
+$reloadbutton->pack(-side => 'left',
+		    -fill => "y");
+$reloadbutton->bind('<Any-Leave>' => \&blankState);
+$reloadbutton->bind('<Any-Enter>' => \&reloadState);
+
+my ($forwardbutton, $forwardxbm);
+
+unless ($textbuttons) {
+    # Find the forward button image
+    open(WBMP,&findINC("$CONFIG{ButtonDirectory}/$CONFIG{ForwardButton}")) or 
+	warn "Can't find $CONFIG{ButtonDirectory}/$CONFIG{ForwardButton} in \@INC";
+    my $wbmp = "";
+    while (<WBMP>) {
+	$wbmp .= $_;
+    }
+    close(WBMP);
+    $forwardxbm = new wApua::WBMP2XBM($wbmp);
+}
+
+if ((!$textbuttons) && $forwardxbm->xbm) {
+    my $forwardImage = $navbar->Bitmap('forward', 
+				       @co, 
+				       -data => $forwardxbm->xbm,
+				       -maskdata => $forwardxbm->xbm);
+    $forwardbutton = $navbar->Button(-image => $forwardImage, 
+				     -width => 19,
+				     -command => \&forward,
+				     @buttonpadding, @co);
+} else {
+    $forwardbutton = $navbar->Button(-text => 'Forward »', @co, @buttonpadding,
+				  -command => \&forward);
+}
+
+$forwardbutton->pack(-side => 'left',
+		     -fill => "y");
+$forwardbutton->bind('<Any-Leave>' => \&blankState);
+$forwardbutton->bind('<Any-Enter>' => \&forwardState);
+
+my ($stopbutton, $stopxbm);
+unless ($textbuttons) {
+    # Find the stop button image
+    open(WBMP,&findINC("$CONFIG{ButtonDirectory}/$CONFIG{StopButton}")) or 
+	warn "Can't find $CONFIG{ButtonDirectory}/$CONFIG{StopButton} in \@INC";
+    my $wbmp = "";
+    while (<WBMP>) {
+	$wbmp .= $_;
+    }
+    close(WBMP);
+    $stopxbm = new wApua::WBMP2XBM($wbmp);
+}
+
+if ((!$textbuttons) && ($stopxbm->xbm)) {
+    my $stopImage = $navbar->Bitmap('stop', 
+				    @co, 
+				    -data => $stopxbm->xbm,
+				    -maskdata => $stopxbm->xbm);
+    $stopbutton = $navbar->Button(-image => $stopImage, 
+				  -width => 19,
+				  -command => \&stop,
+				  @buttonpadding, @co);
+} else {
+    $stopbutton = $navbar->Button(-text => 'Stop', @co, @buttonpadding,
+				  -command => \&stop );
+}
+
+$stopbutton->pack(-side => 'left',
+		  -fill => "y");
+$stopbutton->bind('<Any-Leave>' => \&blankState);
+$stopbutton->bind('<Any-Enter>' => sub {
+    &textState("Interrupt current transfer!")
+	if $stopbutton->cget(-state) eq "normal"; });
+
+sub stop {
+    $stop = 1;
+}
+
+sub stopfree {
+    $stopbutton->configure(-state => 'normal');
+    $stopbutton->update;
+    $stop = 0;
+}
+
+sub stopclosed { 
+    $stopbutton->configure(-state => 'disabled');
+    $stopbutton->update;
+    $stop = 0;
+}
+
+my ($homebutton, $homexbm);
+unless ($textbuttons) {
+    # Find the home button image
+    open(WBMP,&findINC("$CONFIG{ButtonDirectory}/$CONFIG{HomeButton}")) or 
+	warn "Can't find $CONFIG{ButtonDirectory}/$CONFIG{HomeButton} in \@INC";
+    my $wbmp = "";
+    while (<WBMP>) {
+	$wbmp .= $_;
+    }
+    close(WBMP);
+    $homexbm = new wApua::WBMP2XBM($wbmp);
+}
+
+if ((!$textbuttons) && $homexbm->xbm) {
+    my $homeImage = $navbar->Bitmap('home', 
+				    @co, 
+				    -data => $homexbm->xbm,
+				    -maskdata => $homexbm->xbm);
+    $homebutton = $navbar->Button(-image => $homeImage, 
+				  -width => 19,
+				  -command => \&home,
+				  @co, @buttonpadding);
+} else {
+    $homebutton = $navbar->Button(-text => 'Home', @co, @buttonpadding,
+				  -command => \&home);
+}
+
+$homebutton->pack(-side => 'left',
+		  -fill => "y");
+$homebutton->bind('<Any-Leave>' => \&blankState);
+$homebutton->bind('<Any-Enter>' => sub {
+    &textState("Go home ($homeurl)"); });
+
+my $exitbutton = $navbar->Button(-text => 'Quit', @co, @buttonpadding,
+		-command => sub { exit; });
+$exitbutton->pack(-side => 'right',
+		  -fill => "y");
+$exitbutton->bind('<Any-Leave>' => \&blankState);
+$exitbutton->bind('<Any-Enter>' => sub {
+    &textState("Quit $version"); });
+
+my $aboutbutton = $navbar->Button(-text => 'About',
+				  @co, @buttonpadding,
+				  -command => sub { 
+				      &fetchAddToHistory("about:"); });
+$aboutbutton->pack(-side => 'right',
+		  -fill => "y");
+$aboutbutton->bind('<Any-Leave>' => \&blankState);
+$aboutbutton->bind('<Any-Enter>' => sub { &textState("About $version"); });
+
+$window->update;
+
+### Menu
+
+my $menubutton = $locbar->Menubutton(-text => "Menu",
+				     @buttonpadding,
+				     @menucolors);
+my $menu = $menubutton->menu(-tearoff => 0,
+			     @menucolors);
+$menubutton->pack(-side => 'left');
+
+$menu->command(-label => 'Help',    
+	       -command => sub { &blankState;
+				 &fetchAddToHistory("about:#keys"); },
+	       ($helpkey?(-accelerator => $helpkey):()), 
+	       @menucolors);
+$menu->command(-label => 'Show source',    
+	       -command => sub { &blankState; &showSource($source); },
+	       -accelerator => "$default_modkey-U", 
+	       @menucolors);
+$menu->command(-label => 'Cache contents',    
+	       -command => sub { &blankState;
+				 &fetchAddToHistory("about:#cache"); },
+	       @menucolors);
+$menu->command(-label => 'Quit',    
+	       -command => sub { exit; },
+	       -accelerator => "$default_modkey-Q", 
+	       @menucolors);
+
+my $hisbutton = $locbar->Menubutton(-text => "History",
+				    @buttonpadding,
+				    @menucolors);
+my $hismenu = $hisbutton->menu(-tearoff => 1,
+			       @menucolors);
+$hisbutton->pack(-side => 'left');
+
+my $history = new wApua::History(\&fetchUsingCache, \&textState,
+				 $forwardbutton, $hismenu, 
+				 $cib, @menucolors,
+				 -font => $softbuttonfont);
+my $cache = new wApua::Cache($wapua,$wapua_headers);
+
+$menu->bind('<<MenuSelect>>' => sub {
+    my $w = $Tk::event->W;
+    &textState("Get help on keybindings (about:#keys)") 
+	if ($w->entrycget('active', -label) eq "Help");
+    &textState("Show actual contents of the RAM cache (about:#cache)") 
+	if ($w->entrycget('active', -label) eq "Cache contents");
+    &textState("Show source code of $acturl") 
+	if ($w->entrycget('active', -label) eq "Show source");
+    &textState("Quit $version") 
+	if ($w->entrycget('active', -label) eq "Quit");
+    $window->idletasks;
+});
+
+$locbar->Label(-text => 'URL: ', @co, -takefocus => 0)->pack(-side => 'left');
+my $urlfield = $locbar->Entry(-width => 40, @co, @fieldpadding,
+			      -exportselection => 1,
+			      -highlightthickness => 1,
+			      -takefocus => 1,
+			      -textvariable => \$url);
+$urlfield->pack(-side => 'left',
+		-expand => 1,
+		-fill => "x");
+$urlfield->bind('<Any-Leave>' => \&blankState);
+$urlfield->bind('<Any-Enter>' => sub {
+    &textState("Insert some text and hit <Enter>... ;-)"); });
+
+my $statusline = $window->Frame(-relief => "sunken",
+				-takefocus => 0,
+				-borderwidth => 1,
+				@co);
+my $status = $statusline->Label(-text => ' ', @co, 
+				-takefocus => 0,
+				-width => -1,
+				-font => "font=-1=normal",
+				-relief => "flat",
+				-justify => "left");
+my $filesize = $statusline->Label(-text => ' ', @co,
+				  -takefocus => 0,
+				  -font => "font=-1=normal",
+				  -relief => "flat",
+				  -justify => "right");
+$filesize->pack(-side => 'right',
+		-anchor => "e");
+$status->pack(-side => 'left',
+	      -anchor => "w");
+#$statusline->packPropagate(0);
+$statusline->pack(-side => 'bottom',
+		  -fill => "x",
+		  -padx => 2,
+		  -pady => 2);
+
+### WAP-Page := Browser + Do-Tag-Button-Leiste
+my $wappage = $window->Frame(-borderwidth => 1,
+			     -takefocus => 0,
+			     -relief => "sunken",
+			     # ridge, groove, flat, raised, sunken
+			     @ci);
+$wappage->pack(-side => 'bottom',
+	       -fill => "both",
+	       -padx => 2,
+	       -pady => 2,
+	       -expand => 1);
+
+### Browser := Textfenster + Scrollbar
+my $browser = $wappage->Scrolled("ROText",
+				 -scrollbars => "osoe");
+$browser->ConfigSpecs(-relief => ["SELF"],
+		      -takefocus => ["SELF"],
+		      -borderwidth => ["SELF"],
+		      -background => [("SELF", "CHILDREN")],
+		      -foreground => ["SELF"]);
+$browser->configure(-relief => "flat",
+		    -cursor => $textcursor,
+		    -takefocus => 0,
+		    -borderwidth => "2",
+		    -background => $cib);
+$browser->pack(-side => 'top',
+	       -fill => "both",
+	       -padx => 4,
+	       -padx => 4,
+	       -expand => 1);
+### Scrollbar
+my $scrollbar = $browser->Subwidget("xscrollbar");
+$scrollbar->configure(-activebackground => $cib,
+		      -highlightbackground => $cib,
+		      -highlightcolor => $cib,
+		      -troughcolor => $cib,
+		      -background => $cib,
+		      -activerelief => "ridge",
+		      -relief => "flat",
+		      -width => 3,
+		      -borderwidth => 0,
+		      -takefocus => 1,
+		      -elementborderwidth => 0);
+
+### Textfenster
+my $scrolled = $browser->Subwidget("scrolled");
+$scrolled->configure(@textpadding,
+		     -exportselection => 1,
+		     -takefocus => 0,
+		     -insertofftime => 1,
+		     -insertontime => 0,
+		     -highlightthickness => 0,
+		     -relief => "flat", # ridge, groove, flat, raised, sunken
+		     -width => 0,
+		     -height => 0,
+		     -highlightbackground => $cib,
+		     -wrap => "word",
+		     -borderwidth => 0,
+		     -padx => 0,
+		     -padx => 0,
+		     @ci);
+
+# Place, where the do buttons and the wApua logo reside 
+my $dobar = $wappage->Frame(-borderwidth => 1,
+			    -takefocus => 0,
+			    -relief => "flat",
+			    @ci);
+$dobar->pack(-side => 'bottom',
+	     -fill => "x",
+	     -padx => 0,
+	     -pady => 0);
+
+# Find the wApua Logo
+open(WAPUAWBMP,&findINC("$CONFIG{ButtonDirectory}/$CONFIG{LogoButton}")) or 
+    warn "Can't find $CONFIG{ButtonDirectory}/$CONFIG{LogoButton} in \@INC";
+my $wapuawbmp = "";
+while (<WAPUAWBMP>) {
+    $wapuawbmp .= $_;
+}
+close(WAPUAWBMP);
+
+my ($wapualabel, $wapuaimage);
+
+my $wapuaxbm = new wApua::WBMP2XBM($wapuawbmp);
+if ($wapuaxbm->xbm) {
+    $wapuaimage = $dobar->Bitmap('wApua', 
+				 @cl, 
+				 -data => $wapuaxbm->xbm,
+				 -maskdata => $wapuaxbm->xbm);
+    $wapualabel = $dobar->Label(-image => $wapuaimage,
+				   @cl);
+    $wapualabel->bind('<1>' => sub { &fetchAddToHistory($CONFIG{LogoURL});});
+    $wapualabel->pack(-side => 'right',
+		      -padx => 4,
+		      -pady => 0);
+    $wapualabel->bind('<Any-Leave>' => \&blankState);
+    $wapualabel->bind('<Any-Enter>' => sub {
+	&textState("$version (PERL $], pTk $Tk::VERSION, lwp $LWP::VERSION)");});
+}
+
+$window->update;
+
+### Do-Tag-Button-Leiste
+my $dotags;
+
+sub dotagsInitialize {
+    $dotags=$dobar->Frame(-borderwidth => 1,
+			  -takefocus => 0,
+			  -relief => "flat",
+			  @ci);
+    $dotags->pack(-side => 'left',
+		  -fill => "x",
+		  -padx => 4,
+		  -pady => 4,
+		  (defined($wapualabel) ? (-before => $wapualabel) : ()));
+}
+
+&dotagsInitialize;
+
+# Generate Browser Font Tags
+sub generateFontTags {
+    foreach $fsize (keys %fontsizes) {
+	foreach $bold ("bold", "normal") {
+	    $fname = "font=$fsize=$bold";
+	    foreach $uline ("ul", "nl") {
+		my $ul = ($uline eq "ul"?1:0);
+		$browser->tag("configure" => "$fname=$uline=none",
+			      -font => $fname, @ci,
+			      -underline => $ul);
+		$browser->tag("configure" => "$fname=$uline=link",
+			      -font => $fname, @cl,
+			      -borderwidth => $CONFIG{LinkBorderWidth},,
+			      -relief => $CONFIG{LinkBorderType},
+			      -underline => $ul);
+		$browser->tag("configure" => "$fname=$uline=active",
+			      -font => $fname, @ca,
+			      -underline => $ul);
+	    }
+	}
+    }
+
+    $browser->tag("configure" => "error-normal",
+		  -font => "error-normal", @ce,
+		  -underline => 0);
+    $browser->tag("configure" => "error-bold",
+		  -font => "error-bold", @ce,
+		  -underline => 0);
+    $browser->tag("configure" => "error-small",
+		  -font => "error-small", @ce,
+		  -underline => 0);
+
+}
+
+&generateFontTags;
+
+sub blankState   { $status->configure(-text => ''); }
+sub textState    { $status->configure(-text => uri_unescape(shift)); }
+sub sizeState    { $filesize->configure(-text => shift); }
+sub backState    { my $text = $history->last;
+		   $status->configure(-text => "Go back ($text) in history")
+		       if $text; }
+sub reloadState  { $status->configure(-text => 
+				      "Reload the current document ($acturl)"); }
+sub forwardState { my $text = $history->next;
+		   $status->configure(-text => "Go forward ($text) in history")
+		       if $text; }
+
+sub scrolldown {
+    $scrolled->yview(scroll => 1, "units");
+}
+
+sub scrollup {
+    $scrolled->yview(scroll => -1, "units");
+}
+
+sub pagedown {
+    $scrolled->yview(scroll => 1, "pages");
+}
+
+sub pageup {
+    $scrolled->yview(scroll => -1, "pages");
+}
+
+### Key Bindings
+my $modkey;
+
+$window->bind('all','<Tab>','focusNext');
+$window->bind('all','<<LeftTab>>','focusPrev');
+$window->bind('all','<Shift-Tab>','focusPrev');
+
+# vi
+$window->bind('all',"<j>" => \&scrolldown);
+$window->bind('all',"<k>" => \&scrollup);
+$window->bind('all',"<h>" => \&back);
+$window->bind('all',"<l>" => \&forward);
+
+# Netscape
+$window->bind('all',"<space>" => \&pagedown);
+$window->bind('all',"<BackSpace>" => \&pageup);
+$window->bind('all',"<Return>" => \&scrolldown);
+$window->bind('all',"<minus>" => \&scrollup);
+
+# Emacs / Netscape
+
+unless ($noKPkeysyms) {
+    $window->bind('all',"<KP_Next>" => \&pagedown);
+    $window->bind('all',"<KP_Prior>" => \&pageup);
+
+    $window->bind('all',"<KP_Down>" => \&scrolldown);
+    $window->bind('all',"<KP_Up>" => \&scrollup);
+}
+
+$window->bind('all',"<Next>" => \&pagedown);
+$window->bind('all',"<Prior>" => \&pageup);
+
+$window->bind('all',"<Down>" => \&scrolldown);
+$window->bind('all',"<Up>" => \&scrollup);
+
+$window->bind('all',"<Control-n>" => \&scrolldown);
+$window->bind('all',"<Control-p>" => \&scrollup);
+
+$window->bind('all',"<F1>" => sub { &fetchAddToHistory("about:#keys"); });
+$window->bind('all',"?" => sub { &fetchAddToHistory("about:#keys"); });
+
+# Sun key bindings. (I'm developing on a Ultra 10 :-)
+
+
+unless ($ eq "MSWin32" or $ eq "MacOS") {
+    $window->bind('all',"<L2>" => \&reload);
+    $window->bind('all',"<$helpkey>" => sub { &fetchAddToHistory("about:#keys"); });
+    $window->bind('all',"<SunProps>" => sub { &fetchAddToHistory("about:#info"); });
+    $window->bind('all',"<L3>" => sub { &fetchAddToHistory("about:#info"); });
+}
+
+
+unless ($ eq "MacOS") {
+    $window->bind('all',"<Alt-F4>" => sub { exit; });
+    $window->bind('all',"<Meta-F4>" => sub { exit; });
+}
+
+foreach $modkey (@modkeylist) {
+    # Emacs / Netscape
+    $window->bind('all',"<$modkey-Left>" => \&back);
+    $window->bind('all',"<$modkey-Right>" => \&forward);
+    $window->bind('all',"<$modkey-b>" => \&back);
+    $window->bind('all',"<$modkey-f>" => \&forward);
+    unless ($noKPkeysyms) {
+	$window->bind('all',"<$modkey-KP_Left>" => \&back);
+	$window->bind('all',"<$modkey-KP_Right>" => \&forward);
+    }
+    $window->bind('all',"<$modkey-q>" => sub { exit; });
+    $window->bind('all',"<$modkey-r>" => \&reload);
+    $window->bind('all',"<$modkey-h>" => \&home);
+    $window->bind('all',"<$modkey-u>" => \&showSource);
+    unless ($modkey eq "Control") {
+	$window->bind('all',"<$modkey-n>" => \&pagedown);
+	$window->bind('all',"<$modkey-p>" => \&pageup);
+    }
+}
+
+# Special bindings for the location field
+$urlfield->bind('<Return>', sub{ &fetchHeuristic($url);
+				 $browser->focusForce; } );
+$urlfield->bind('<Control-u>', sub{$urlfield->delete(0,"end")});
+
+# Remove some class bindings from the browser's text window
+foreach (qw(Tab <LeftTab> Shift-Tab Return h j k l space BackSpace 3
+	    Return minus)) {
+    $scrolled->bind(ref($scrolled),      "<Any-$_>", '');
+    $scrolled->bind($scrolled->toplevel, "<Any-$_>", '');
+    $scrolled->bind($scrolled,           "<Any-$_>", '');
+}
+$scrolled->bindtags(['all',$scrolled->toplevel,$scrolled,ref($scrolled)]);
+
+&noglobalbind($urlfield);
+
+### PopUp-Menu
+
+my $popup = $window->Menu(-type => "tearoff",
+			  -tearoff => 0,
+			  -popover => 'cursor',
+			  -font => $softbuttonfont,
+			  @menucolors);
+my $backpopup = $popup->command(-label => '~Back', 
+				-command => sub { &blankState; &back; },
+				-state => ($history->last?"normal":"disabled"),
+				@menucolors);
+
+my $fwdpopup = $popup->command(-label => '~Forward', 
+			       -command => sub { &blankState; &forward; },
+			       -state => ($history->next?"normal":"disabled"),
+			       @menucolors);
+
+#$popup->separator(@menucolors);
+
+$popup->command(-label => '~Reload', 
+		-command => sub { &blankState; &reload; },
+		@menucolors);
+
+$popup->command(-label => '~Show source', 
+		-command => sub { &blankState; &showSource($source); },
+		@menucolors);
+
+$popup->command(-label => '~Home', 
+		-command => sub { &blankState; &home; },
+		@menucolors);
+
+$popup->toplevel->overrideredirect(1); # This is the magic line, which
+				       # makes the wm borders go away!
+				       # *smile*
+
+$popup->bind('<<MenuSelect>>' => sub {
+    my $w = $Tk::event->W;
+    &backState    if ($w->entrycget('active', -label) eq "Back");
+    &forwardState if ($w->entrycget('active', -label) eq "Forward");
+    &reloadState  if ($w->entrycget('active', -label) eq "Reload");
+    &textState("Go home ($homeurl)") 
+	if ($w->entrycget('active', -label) eq "Home");
+    &textState("Show source code of $acturl") 
+	if ($w->entrycget('active', -label) eq "Show source");
+    $window->idletasks;
+});
+
+
+
+sub NavPopup {
+    my ($w, $X, $Y) = @_;
+    $popup->Post($X-10,$Y-10);
+}
+
+
+foreach my $w ($wappage, $scrolled, $wapualabel, $wapuaimage) {
+    $w->bind($w, '<ButtonPress-3>', 
+	     [\&NavPopup, Ev('X'), Ev('Y')] ) 
+	if defined $w;
+}
+
+# History function
+
+my %backbuttons = ();
+
+sub configBack {
+    my $state = shift;
+    $backbutton->configure(-state => $state);
+    $backpopup->configure(-state => $state);
+    foreach (values %backbuttons) {
+	$_->configure(-state => $state);
+    }
+}
+
+sub configForward {
+    my $state = shift;
+    $forwardbutton->configure(-state => $state);
+    $fwdpopup->configure(-state => $state);
+}
+
+sub back {
+    if ($history->last) {
+	&fetchUsingCache($history->back);
+    } else {
+	$backbutton->bell;
+	&configBack("disabled");
+    }
+    &configForward("normal") if $history->next;
+}
+
+sub forward {
+    if ($history->next) {
+	&fetchUsingCache($history->forward);
+    } else {
+	$backbutton->bell;
+	&configForward("disabled");
+    }
+    &configBack("normal") if $history->last;
+}
+
+sub reload {
+    &fetchDirect($acturl);
+}
+
+sub home {
+    &fetchAddToHistory($homeurl);
+}
+
+#  sub modifyGlobalCursor {
+#      my $cursor = shift;
+#      $window->configure(-cursor => $cursor);
+#      $browser->configure(-cursor => $cursor);
+#      $scrolled->configure(-cursor => $cursor);
+#      $wappage->configure(-cursor => $cursor);
+#  }
+
+sub GlobalBusy {
+    foreach my $w ($browser, $wappage, $window) {
+	$w->Busy(-recurse => 0, -cursor => $waitcursor);
+    }
+    $wait = 1;
+}
+
+sub GlobalUnbusy {
+    foreach my $w ($window, $wappage, $browser) {
+	$w->Unbusy;
+    $wait = 0;
+    }
+}
+
+#######################################################
+### Functions for getting and displaying new pages. ###
+#######################################################
+
+# For command-line use; 
+sub fetchFile {
+    $url = shift;
+    my $newurl = URI::file->new_abs($url);
+    print STDERR "*** fetchFile: $url -> $newurl ***\n" if $debug >= 2;
+    &textState("Resolving relative path $url to $newurl...");
+    return (-e $url ? &fetchAddToHistory($newurl) : &fetchHeuristic($url));
+}
+
+# Guessing the right URL 
+sub fetchHeuristic {
+    $url = shift;
+    my $newurl = URI::Heuristic::uf_uristr($url);
+    print STDERR "*** fetchHeuristic: $url -> $newurl ***\n" if $debug >= 2;
+    &textState("Interpolating $url to $newurl...");
+    return &fetchAddToHistory($newurl);
+}
+
+# Adding URL to history
+sub fetchAddToHistory {
+    my $newurl = shift;
+    my $fetchurl = &URLtoFetch($newurl);
+    print STDERR "*** fetchAddToHistory: $fetchurl ***\n" if $debug >= 2;
+    $history->push($fetchurl);
+    &configBack("normal");
+    &configForward("disabled");
+    &fetchUsingCache($newurl);
+}
+
+# Looking up URL in cache and retrieving it from cache, if applicable
+sub fetchUsingCache {
+    my $newurl = shift;
+    my $fetchurl = &URLtoFetch($newurl);
+    print STDERR "*** fetchUsingCache: $fetchurl ***\n" if $debug >= 2;
+    &configBack($history->last?"normal":"disabled");
+    &configForward($history->next?"normal":"disabled");
+    (!&internalURL($fetchurl) && 
+     $cache->inCache($fetchurl) && 
+     !$cache->expired($fetchurl) ?
+     &fetchCache($newurl):
+     &fetchDirect($newurl));
+}
+
+# Fetching URL directly from cache 
+sub fetchCache {
+    my $newurl = shift;
+    my $fetchurl = &URLtoFetch($newurl);
+    print STDERR "*** fetchCache: $fetchurl ***\n" if $debug >= 2;
+    &textState("Getting $fetchurl from RAM cache...");
+    &sizeState("");    
+    $content = $cache->getCachedContent($fetchurl);
+    print "From Cache: $fetchurl\n" if $debug >= 1;
+    &useFetched($cache->getCachedResponse($fetchurl),$newurl);
+}
+
+# Fetching URL directly without looking it up in the cache 
+sub fetchDirect {
+    my $newurl = shift;
+    my $fetchurl = &URLtoFetch($newurl);
+    print STDERR "*** fetchDirect: $fetchurl ***\n" if $debug >= 2;
+    &textState("Fetching $fetchurl...");
+    &sizeState("");
+    $content = "";
+
+    # SCNR
+    if ($url =~ m/^about:42$/i) {
+	textState("Don't panic!");
+	&fetchAddToHistory("http://wap.h2g2.com/");
+	textState("Don't panic!");
+	print STDERR "\n\nDon't panic! ;-)\n\n";
+	return 0;
+    }
+    
+    my $response = 0;
+
+    # Preserving internal pages and telephone URLs coming in contact
+    # with lwp
+    unless (&internalURL($url) or &telURL($url)) {
+	&stopfree;
+	my $request = new HTTP::Request('GET', $fetchurl, $wapua_headers);
+	print $request->as_string if $debug >= 1;
+	$response = $wapua->request($request,\&reqcallback);
+	print $response->as_string if $debug >= 1;
+	$response->content($content);
+    }
+    &useFetched($response,$url);
+}
+
+# Calculating the URL to fetch and updating title and location field.
+sub URLtoFetch {
+    my $fetchurl = URI->new_abs(shift,$acturl)->as_string;
+    print STDERR "*** URLtoFetch: $fetchurl ***\n" if $debug >= 2;
+    $url = $fetchurl;
+    $window->configure(-title => "$version: $fetchurl");
+    return &URLtoFetchNoURLfield($fetchurl);
+}
+
+sub URLtoFetchNoURLfield {
+    my $fetchurl = URI->new_abs(shift,$acturl)->as_string;
+    print STDERR "*** URLtoFetchNoURLfield: $fetchurl ***\n" if $debug >= 2;
+    #&modifyGlobalCursor($waitcursor);
+    &GlobalBusy;
+    #$wait = 1;
+    # Needs 3 to 10 seconds after cache access!!! Very strange...
+    #$window->update; 
+    $fetchurl =~ s/\#.*$//;
+    return $fetchurl;
+}
+
+# Doing something with the fetched document
+sub useFetched {
+    # First parameter is response object
+    my $response = shift;
+    # Second parameter is relative URL
+    $url = shift;
+
+    # Extracting the card id
+    print STDERR "*** useFetched $url...\n" if $debug >= 2;
+    $card = ($url =~ m/\#(.*)$/ ? uri_unescape($1) : "");
+    $acturl = ($response ? $url = $response->base() : $url);
+
+    #print STDERR "*** $acturl | $url ***\n";
+
+    $history->set($url);
+
+    # Initializing the do-buttons and other things
+    %backbuttons = ();
+    $dotags->destroy;
+    &dotagsInitialize;
+    $cardcounter = 0;
+
+    my $imagedimension = 0;
+
+    if (&internalURL($url)) {
+	&textState("Showing internal page $url...");
+	$source = new wApua::About($version,$cache,$helpkey,
+				   @modkeylist)->as_string;
+	$content = $source;
+	&display(preparser($source));
+    } elsif (&telURL($url)) {
+	&textState("Showing telephone book: $url...");
+	$source = new wApua::Phone($url)->as_string;
+	$content = $source;
+	&display(preparser($source));
+    } elsif ($response->is_success) {
+	$source = $content;
+	my $seite=preparser($content);
+	$cache->addResponse($response) 
+	    unless (($url =~ m(^file:/)i) or $stop);
+
+	if ($response->header('Content-Type') eq "text/plain") {
+	    $browser->configure(-wrap => "none");
+	    $browser->delete("0.0","end");
+	    $browser->insert("end", $content);
+#	    $browser->configure(-cursor => $textcursor);
+	    #$wait = 0;
+	} elsif (($response->header('Content-Type') eq 
+		  "image/vnd.wap.wbmp") or
+		 ($url =~ m/\.wbmp$/i)) {
+	    $browser->configure(-wrap => "none");
+	    $browser->delete("0.0","end");
+	    $imagedimension = &insertImage($content,$url,$browser);
+#	    $browser->configure(-cursor => $textcursor);
+	    #$wait = 0;
+	} elsif ($seite !~ m(^\s*(<.*>)?\s*<!DOCTYPE wml PUBLIC [\"\']-//(WAPFORUM|PHONE\.COM)//DTD WML 1\.[1-3]//EN[\"\']\s+[\"\']([^<>\"]*)[\"\']\s*>\s*<)is) {
+	    $browser->configure(-wrap => "none");
+	    $browser->delete("0.0","end");
+	    $browser->insert("end", "No WML page:\n" => "error-bold",
+			     $content => ("ttfont=0=normal=nl=none"));
+	    $browser->insert("end", 
+			     "\nError: " => "error-bold",
+			     "Transfer interrupted!" => "error-normal")
+		if $stop;
+#	    $browser->configure(-cursor => $textcursor);
+	    #$wait = 0;
+	} else {
+	    $timer_url = 0;
+	    $scrolled->afterCancel($timer_id) if ($timer_id != 0);
+	    $timer_id = 0;
+	    $timer_info = 0;
+	    my $xml = $1;
+	    my $dtd = $3;
+	    warn "Incorrect DTD: $dtd"
+		if $dtd !~ m"http://www\.wapforum\.org/DTD/wml(_.*)?\.xml";
+	    if ($xml =~ /^\s*$/) {
+		warn "Missing XML version tag!";
+	    } elsif ($xml !~ m|<\?xml\sversion=[\"\']\d+\.\d+[\"\'](\s[^<>]*)?\?>|) {
+		warn "Wrong XML version tag: $xml";
+	    }
+	    $seite =~ s(^(<.*>)? ?<!DOCTYPE WML PUBLIC [\"\']-//(WAPFORUM|PHONE\.COM)//DTD WML 1\.[1-3]//EN[\"\']\s+[\"\'][^<>\"]*[\"\']\s*> ?<)(<)is;
+	    if ($stop) {
+		$browser->delete("0.0","end");
+		$browser->configure(-wrap => "none");
+		$browser->insert("end", 
+				 "Error: " => "error-bold",
+				 "Transfer interrupted!" => "error-normal");
+	    } else {
+		&display($seite);
+	    }
+	}
+    } else { # Error!
+	$browser->configure(-wrap => "none");
+	$browser->delete("0.0","end");
+	$browser->insert("end", 
+			 "Error: " => "error-bold",
+			 $response->status_line => "error-normal");
+
+	&sizeState("");
+#	$browser->configure(-cursor => $textcursor);
+	#$wait = 0;
+    }
+
+    $window->{source} = $source;
+
+    # Write some appropriate string into the right part of the status
+    # line...
+    if ($imagedimension) {
+	&sizeState("$imagedimension WBMP: ".length($source)." Bytes");
+    } elsif ($cardcounter == 1) {
+	&sizeState("Deck size: ".length($source)." Bytes, 1 Card");
+    } elsif ($cardcounter) {
+	&sizeState("Deck size: ".length($source)." Bytes, $cardcounter Cards");
+    } else {
+	&sizeState("Content length: ".length($source)." Bytes");
+    }
+
+    # Update left part of status line...
+    &textState("Done.");
+    &textState($timer_info) if $timer_id;
+    &GlobalUnbusy;
+    #$browser->configure(-cursor => $textcursor);
+    &stopclosed;
+    #$window->configure(-cursor => $normalcursor);
+    #$wait = 0;
+}
+
+sub reqcallback {
+    my($data, $response, $protocol) = @_;
+    $content .= $data;
+    #print $response->header('Content-Length')."\n";
+    if ($response->header('Content-Length')) {
+	my $contleng = $response->header('Content-Length');
+	&textState("Received ".length($content)." of $contleng Bytes (".
+		   int(100*length($content)/$contleng)."%)...");
+	# Tk::ProgressBar
+    } else {
+	&textState("Received ".length($content)." Bytes...");
+    }
+    &sizeState("Content length: ".length($content)." Bytes");
+    die "Transfer interrupted" if $stop;
+    $status->update;
+    $window->idletasks;
+}
+
+sub display {
+    # Content as parameter
+    my $seite = shift;
+    my $foobar; # temporary data
+    my @tagstack = ();
+    my $font = "font=0=normal=nl=none";
+    my $fontsize;
+    my @fontstack = ($font);
+    my $end = 0;
+    my $link = 0;
+    my $token;
+    my $cardstate=0;
+    my $dostate=0;
+    my $doid=0;
+    my %dobuttons=();
+    my $doname;
+    my $dolabel;
+    my $anchorstate = 0;
+    my $ul = 0;
+    my %tabledata=();
+    my $table=0;
+    my $topbrowser=$browser;
+
+    # clear browser window
+    $browser->configure(-wrap => "word");
+    $browser->delete("0.0","end");
+
+    # initialize parser.
+    my $parser = HTML::TokeParser->new(\$seite);
+    $parser->xml_mode(1);
+    $parser->strict_names(1);
+    $parser->marked_sections(1);
+    while (($token = $parser->get_token) || !$end) {
+	my @tokendata = @{$token};
+	# Debugging
+	#foreach (@tagstack) {
+	#    print "$_ ";
+	#}
+	#print "\n";
+        if ($tokendata[0] eq "T") { # plain text
+	    $tokendata[1] = &transformEntities($tokendata[1]);
+	    $browser->insert("end", $tokendata[1], $font) if $cardstate;
+	    #print "$font: $tokendata[1]\n" if $cardstate;
+	} elsif ($tokendata[0] eq "S") {
+	    push(@tagstack,$tokendata[1]);
+	    if ($tokendata[1] eq "br") { # line break
+		$browser->insert("end", "\n", $font) if $cardstate;
+	    } elsif ($tokendata[1] eq "p") { # paragraph start
+		$browser->insert("end", "\n", $font) if $cardstate;
+	    } elsif ($tokendata[1] eq "card") { # card begin
+		$cardcounter++;
+		my $id = $ {$tokendata[2]}{"id"};
+		if ($card eq "") {
+		    $card = "$id";
+		    $cardstate = 1;
+		} else {
+		    $cardstate = 1 if $card eq $id;
+		}
+		if ($cardstate) {
+		    $acturl =~ s/\#.*$//;
+		    $history->set($url=$acturl .= "#$card");
+		    my $title = "";
+		    if (defined $ {$tokendata[2]}{"title"}) {
+			$title = $ {$tokendata[2]}{"title"};
+			#print "$id -> $title\n";
+			$window->configure(-title => "$version: $title");
+			$history->settitle($title);
+		    }
+		    if (defined $ {$tokendata[2]}{"ontimer"}) {
+			$timer_url = $ {$tokendata[2]}{"ontimer"};
+		    }
+		    
+		}
+		#print "wanted: $card, card-id: $id, card-state: $cardstate\n";
+	    } elsif ($tokendata[1] eq "do") { # do start
+		$dostate=1;
+		$doname = (defined($ {$tokendata[2]}{"name"}) ?
+			   $ {$tokendata[2]}{"name"} : $doid++);
+		
+		$dolabel = &transformEntities($ {$tokendata[2]}{"label"})
+		    if defined $ {$tokendata[2]}{"label"};
+		#print "do: name: $doname, label: $dolabel\n";
+	    } elsif ($tokendata[1] eq "template") { # template start
+		$cardstate=2;
+	    } elsif ($tokendata[1] eq "go") { # paragraph start
+		&linktype($tokendata[1], $ {$tokendata[2]}{"href"}, $font,
+			  $cardstate, $dostate, $anchorstate,
+			  \%dobuttons, $doname, $dolabel);
+	    } elsif ($tokendata[1] eq "noop") { # no operation
+		if ($dostate && ($cardstate == 1)) {
+		    $dobuttons{$doname}->destroy 
+			if defined $dobuttons{$doname};
+		    delete $backbuttons{$doname};
+		    #print "Deleting $doname\n";
+		}
+		if ($anchorstate && $cardstate) {
+		    my $localfont = $font;
+		    $browser->tag('bind', $localfont, '<Any-Enter>' => '');
+		    $browser->tag('bind', $localfont, '<1>' => '');
+		}
+	    } elsif ($tokendata[1] =~ m%^(prev|refresh)$%) { # back & reload
+		&linktype($tokendata[1], 0, $font,
+			  $cardstate, $dostate, $anchorstate,
+			  \%dobuttons, $doname, $dolabel);
+	    } elsif ($tokendata[1] =~ m/^(b|strong)$/) { # bold, strong emph.
+		#print "tag <$tokendata[1]>: switch from $font to ";
+		push(@fontstack,$font);
+		$font =~ s/^([^=]+)=([^=]+)=([^=]+)=([^=]+)=([^=]+)$/$1=$2=bold=$4=$5/;
+		#print "$font.\n";
+	    } elsif ($tokendata[1] eq "pre") { # tt
+		#print "tag <$tokendata[1]>: switch from $font to ";
+		push(@fontstack,$font);
+		$font =~ s/^([^=]+)=([^=]+)=([^=]+)=([^=]+)=([^=]+)$/ttfont=$2=$3=$4=$5/;
+		#print "$font.\n";
+	    } elsif ($tokendata[1] eq "table") { # tables
+		my $columns = (defined($ {$tokendata[2]}{"columns"}) ?
+			       $ {$tokendata[2]}{"columns"} :
+			       0);		    
+		if ($cardstate) {
+		    $table++;
+		    $tabledata{$table}{widget} = 
+			$scrolled->Frame(-takefocus => 0,
+					 -highlightthickness => 0,
+					 -relief => "flat", # raised
+					 -highlightbackground => $cib,
+					 @ci,
+					 -borderwidth => 1);
+		    $tabledata{$table}{row} = -1;
+		    $tabledata{$table}{col} = -1;
+		    $scrolled->window('create', "end",
+				      -window => $tabledata{$table}{widget},
+				      -align => "baseline");
+		}
+	    } elsif ($tokendata[1] eq "tr") { # table rows
+		if ($cardstate) {
+		    $tabledata{$table}{col} = -1;
+		    $tabledata{$table}{row}++;
+		}
+	    } elsif ($tokendata[1] eq "td") { # table data
+		if ($cardstate) {
+		    $tabledata{$table}{col}++;
+		    #print STDERR "$tabledata{$table}{row} $tabledata{$table}{col}\n";
+		    $browser = $tabledata{$table}{widget}->
+			ROText(@textpadding,
+			       -exportselection => 1,
+			       -takefocus => 0,
+			       -highlightthickness => 0,
+			       -relief => "flat", # sunken
+			       -highlightbackground => $cib,
+			       -wrap => "word",
+			       -borderwidth => 0,
+			       -insertofftime => 1,
+			       -insertontime => 0,
+			       -width => 0,
+			       -height => 2,
+			       -padx => 2,
+			       -pady => 0,
+			       @ci);
+		    &generateFontTags;
+		    $browser->grid(-row => $tabledata{$table}{row},
+				   -column => $tabledata{$table}{col},
+				   -sticky => "nsew");
+		}
+	    } elsif ($tokendata[1] eq "big") { # big
+		#print "tag <$tokendata[1]>: switch from $font to ";
+		push(@fontstack,$font);
+		$fontsize = (scalar grep(($_ eq "big"),@tagstack)) ? 2 : 1;
+		$font =~ s/^([^=]+)=([^=]+)=([^=]+)=([^=]+)=([^=]+)$/$1=$fontsize=$3=$4=$5/;
+		#print "$font.\n";
+	    } elsif ($tokendata[1] eq "u") { # underline
+		#print "tag <$tokendata[1]>: switch from $font to ";
+		push(@fontstack,$font);
+		$font =~ s/^([^=]+)=([^=]+)=([^=]+)=([^=]+)=([^=]+)$/$1=$2=$3=ul=$5/;
+		#print "$font.\n";
+	    } elsif ($tokendata[1] eq "small") { # big
+		#print "tag <$tokendata[1]>: switch from $font to ";
+		push(@fontstack,$font);
+		$fontsize = (scalar grep(($_ eq "small"),@tagstack)) ? -2 : -1;
+		$font =~ s/^([^=]+)=([^=]+)=([^=]+)=([^=]+)=([^=]+)$/$1=$fontsize=$3=$4=$5/;
+		#print "$font.\n";
+	    } elsif ($tokendata[1] eq "anchor") { # link
+		$link++;
+		push(@fontstack,$font);
+		$font =~ s/^([^=]+)=([^=]+)=([^=]+)=([^=]+)=([^=]+)$/$1=$2=$3=$4=link$link/;
+		#print "$localfont/$foobar.\n";
+		$anchorstate = 1;
+	    } elsif ($tokendata[1] eq "timer") { # timer
+		if ($cardstate and $timer_url) {
+		    my $value = $ {$tokendata[2]}{"value"};
+		    my $time = $value/10;
+		    $timer_info = "Timer redirect in ".($value/10)."sec to ".
+			URI->new_abs($timer_url, $acturl)->as_string;
+		    $timer_id = $scrolled->after($value*100,\&timer);
+		}
+	    } elsif ($tokendata[1] eq "img") { # image
+		if ($cardstate) {
+		    &insertImageURL($ {$tokendata[2]}{"src"},$browser);
+		}
+	    } elsif ($tokendata[1] eq "a") { # link
+		$link++;
+		#print "tag <$tokendata[1] href='$linkurl'>: switch from $font to ";
+		push(@fontstack,$font);
+		$font =~ s/^([^=]+)=([^=]+)=([^=]+)=([^=]+)=([^=]+)$/$1=$2=$3=$4=link$link/;
+		&linktype("go", $ {$tokendata[2]}{"href"}, $font,
+			  $cardstate, 0, 1, 0, 0, 0);
+	    } elsif ($tokendata[1] eq "wml") { # deck start
+		# do nothing
+	    } else { # any other start tag
+		&syntaxignore(@tokendata);
+	    }
+	    
+	} elsif ($tokendata[0] eq "E") {
+	    $foobar = pop(@tagstack);
+	    if ($foobar eq $tokendata[1]) {
+		if ($tokendata[1] eq "p") { # paragraph end
+		    $browser->insert("end", "\n", $font) if $cardstate;
+		} elsif ($tokendata[1] =~ m/^(b|pre|strong|big|small|u)$/) {
+		    # font modifiers
+		    #print "tag </$tokendata[1]>: switch from $font to ";
+		    $font = pop(@fontstack);
+		    #print "$font.\n";
+		} elsif ($tokendata[1] eq "a") {
+		    # font modifiers
+		    #print "tag </$tokendata[1]>: switch from $font to ";
+		    $font = pop(@fontstack);
+		    $browser->insert("end", "\n", $font) 
+			if $cardstate && $CONFIG{CarriageReturnAfterLink};
+		    #print "$font.\n";
+		} elsif ($tokendata[1] eq "anchor") {
+		    # font modifiers
+		    #print "tag </$tokendata[1]>: switch from $font to ";
+		    $font = pop(@fontstack);
+		    $anchorstate = 0;
+		    #print "$font.\n";
+		} elsif ($tokendata[1] =~ /^(card|template)$/) {
+		    # card and template end
+		    $cardstate = 0;
+		} elsif ($tokendata[1] eq "do") { # do end
+		    undef $doname;
+		    undef $dolabel;
+		    $dostate = 0;
+		} elsif ($tokendata[1] eq "template") { # template end
+		    $cardstate = 0;
+		} elsif ($tokendata[1] eq "table") { # table end
+		    if ($cardstate) {
+			$browser = $topbrowser;
+			$browser->insert("end", "\n", $font);
+		    }
+		} elsif ($tokendata[1] eq "td") { # table cell end
+		    if ($cardstate) {
+			my $endline = $browser->index("end");
+			$endline =~ s/\..*$//;
+			my $i = 0;
+			my $max = 0;
+			while ($i++ < $endline) {
+			    my $l = length($browser->get("$i.0","$i.0 lineend"));
+			    $max = $l if $l > $max;
+			}
+			$browser->configure(-width => $max,
+					    -height => $endline -1);
+			$browser = $topbrowser;
+		    }
+		} elsif ($tokendata[1] eq "tr") { # table row end
+		    $browser = $topbrowser if $cardstate;
+		} elsif ($tokendata[1] eq "wml") { # deck end
+		    $end = 1;
+		    foreach (@tagstack) {
+			warn "Closing tag not found: </$_>";
+		    }
+		} elsif ($tokendata[1] =~ /^(br|prev|noop|refresh|img|go)$/) {
+		    # do nothing
+		} else {
+		    &syntaxignore("/$tokendata[1]");
+		}
+	    } else {
+		&syntaxwarn($foobar,$tokendata[1]);
+	    }
+	}
+    }
+#    $browser->configure(-cursor => $textcursor);
+}
+
+sub insertImageURL {
+    $content = "";
+    my $imgurl = &URLtoFetchNoURLfield(shift);
+    print STDERR "*** insertImageURL: $imgurl ***\n" if $debug >= 2;
+    my $browser = shift;
+    if ($cache->inCache($imgurl) && !$cache->expired($imgurl)) {
+	&insertImage($cache->getCachedContent($imgurl),$imgurl,$browser);
+	print STDERR "IMAGE from cache: $imgurl\n" if $debug >= 1;
+    } else {
+	&stopfree;
+	my $request = new HTTP::Request('GET', $imgurl, $wapua_image_headers);
+	print STDERR "IMAGE: ".$request->as_string if $debug >= 1;
+	my $response = $wapua->request($request,\&reqcallback);
+	print STDERR "IMAGE: ".$response->as_string if $debug >= 1;
+	$response->content($content);
+	if ($response->is_error) {
+	    $browser->insert("end", ("[Image $imgurl: ".
+					   $response->status_line."]"),
+				   "error-small");
+	    return 0;
+	} else {
+	    $cache->addResponse($response) 
+		unless (($imgurl =~ m(^file:/)i) or $stop);
+	    return &insertImage($content,$imgurl,$browser);
+	}
+	&stopclosed;
+    }
+}
+
+sub insertImage {
+    my $wbmp = new wApua::WBMP2XBM(shift);
+    my $imgurl = shift;
+#      $browser->insert("end", 
+#  		     "[$tokendata[1] " . $wbmp->dimension .
+#  		     "]", 
+#  		     $font);
+    my $browser = shift;
+    my $imglabel;
+
+    if ($wbmp->xbm) {
+	my $tkimage= $browser->Bitmap($imgurl, 
+				      @ci, 
+				      -data => $wbmp->xbm,
+				      -maskdata => $wbmp->xbm);
+	$imglabel = $browser->Label(@ci, 
+				    -image => $tkimage,
+				    -padx => 0,
+				    -pady => 0,
+				    -borderwidth => 0);
+	$browser->window('create', "end",
+			 -window => $imglabel,
+			 -align => "baseline");
+	return &imageinfo($imglabel,$wbmp)
+    } else {
+	$browser->insert("end", 
+			 "[Image $imgurl is of no supported WBMP type.]",
+			 "error-small");
+	return 0;
+    }
+}
+
+sub imageinfo {
+# Parameter: cardstate, imgname
+    my $imglabel = shift;
+    my $imgdim = shift->dimension;
+    $imglabel->bind('<Any-Enter>' => sub { &textState("$imgdim WBMP") } );
+    $imglabel->bind('<Any-Leave>' => \&blankState);
+    return $imgdim;
+}
+
+sub linktype {
+# Parameter: tag, href, font, cardstate, dostate, anchorstate
+    my $tag  = shift;
+    my $href = shift;
+    my $font = shift;
+    my $cardstate   = shift;
+    my $dostate     = shift;
+    my $anchorstate = shift;
+    my $dobuttonsadr = shift;
+    my $doname       = shift;
+    my $dolabel      = shift;
+
+    if ($dostate && $cardstate) {
+	if ($tag eq "go") {
+	    $ {$dobuttonsadr}{$doname} =
+		$dotags->Button(-text => $dolabel,
+				-font => $softbuttonfont,
+				@ci, @buttonpadding,
+				-command => sub{&fetchAddToHistory($href)});
+	    $ {$dobuttonsadr}{$doname}->pack(-side => 'left');
+	    $ {$dobuttonsadr}{$doname}->bind('<Any-Enter>' => sub {
+	        &textState(URI->new_abs($href,$acturl)->as_string);});
+        } elsif ($tag eq "prev") {
+            $dolabel = "« Back" if !defined $dolabel or ($dolabel eq "");
+	    $ {$dobuttonsadr}{$doname} = $dotags->Button(-text => $dolabel,
+                                                        -font => $softbuttonfont,
+							 @ci, @buttonpadding,
+							 -command => \&back);
+            $ {$dobuttonsadr}{$doname}->bind('<Any-Enter>' => \&backState);
+            $ {$dobuttonsadr}{$doname}->configure(-state => "disabled")
+                unless $history->last;
+            $backbuttons{$doname} = $ {$dobuttonsadr}{$doname};
+        } elsif ($tag eq "refresh") {
+            $dolabel = "-Refresh-" if ($dolabel eq "") or !defined $dolabel;
+	    $ {$dobuttonsadr}{$doname}=$dotags->Button(-text => $dolabel,
+						       -font => $softbuttonfont,
+						       @ci, @buttonpadding,
+						       -command => \&reload);
+            $ {$dobuttonsadr}{$doname}->bind('<Any-Enter>' => \&reloadState);
+        }
+        $ {$dobuttonsadr}{$doname}->bind('<Any-Leave>' => \&blankState);;
+        $ {$dobuttonsadr}{$doname}->pack(-side => 'left');
+    } elsif ($anchorstate && $cardstate) {
+	my $localfont = $font;
+	my $foobar = $font;
+	$foobar =~ s/=[un]l=link\d+$//;
+	$browser->tag('bind', $localfont, '<Any-Leave>' =>
+		      sub { my $browser = shift;
+			    $browser->tag('configure', $localfont,
+					  -font => $foobar, @cl,
+					  -borderwidth => $lbw,
+					  -relief => $lbt);
+			    $browser->configure(-cursor => ($wait ?
+							    $waitcursor :
+							    $textcursor));
+			    &blankState; });
+        if ($tag eq "go") {
+            $browser->tag('bind', $localfont, '<Any-Enter>' =>
+                sub { my $browser = shift;
+		      $browser->tag('configure', $localfont,
+				    -font => $foobar, @ca,
+				    -relief => $lhbt,
+				    -borderwidth => $lhbw);
+		      $browser->configure(-cursor => $linkcursor);
+		      &textState(URI->new_abs($href,$acturl)->as_string);
+		  });
+            $browser->tag('bind', $localfont, '<1>' =>
+                sub { &fetchAddToHistory($href); });
+        } elsif ($tag eq "prev") {
+            $browser->tag('bind', $localfont, '<Any-Enter>' =>
+                sub {
+		    if ($history->last) {
+			my $browser = shift;
+			$browser->tag('configure', $localfont,
+				      -font => $foobar, @ca,
+				      -relief => $lhbt,
+				      -borderwidth => $lhbw);
+			$browser->configure(-cursor => $linkcursor);
+			&backState;
+		    }});
+            $browser->tag('bind', $localfont, '<1>' => \&back);
+        } elsif ($tag eq "refresh/") {
+            $browser->tag('bind', $localfont, '<Any-Enter>' =>
+                sub { my $browser = shift;
+		      $browser->tag('configure', $localfont,
+				    -font => $foobar, @ca,
+				    -relief => $lhbt,
+				    -borderwidth => $lhbw);
+		      $browser->configure(-cursor => $linkcursor);
+		      &reloadState;
+		    });
+            $browser->tag('bind', $localfont, '<1>' => \&reload);
+        }
+        $browser->tag('configure', $localfont,
+                      -font => $foobar, @cl,
+                      -relief => $lbt,
+		      -borderwidth => $lbw);
+    }
+}
+
+sub timer {
+    $timer_id = 0;
+    &fetchAddToHistory($timer_url);
+}
+
+sub PasswordDialog {
+    my($realm, $host) = @_;
+    my($user, $password);
+    my $dialog = $window->DialogBox(-title => "Protected area: $realm on $host", 
+				    -buttons => ["OK", "Abort"],
+				    -default_button => "OK", @co, @padding);
+    my $label = $dialog->add('Label',
+			     -text => "Protected Area: $realm on $host", @co);
+    $label->grid(-row => 1,
+		 -column => 1,
+		 -sticky => "nsew",
+		 -columnspan => 3);
+    my $imglabel = $dialog->add('Label',
+				-bitmap => "warning", @co);
+    $imglabel->grid(-row => 2,
+		 -column => 1,
+		 -sticky => "nsew",
+		 -rowspan => 2);
+    my $userlabel = $dialog->add('Label',
+				 -text => "User:", @co);
+    $userlabel->grid(-row => 2,
+		     -column => 2,
+		     -sticky => "nse");
+    my $userfield = $dialog->add('Entry',
+				 -width => 8, @co, @fieldpadding,
+				 -exportselection => 1,
+				 -highlightthickness => 1,
+				 -takefocus => 1,
+				 -textvariable => \$user);
+    $userfield->grid(-row => 2,
+		     -column => 3,
+		     -sticky => "nsw");
+    my $pwdlabel = $dialog->add('Label', 
+				-text => "Password:", @co);
+    $pwdlabel->grid(-row => 3,
+		    -column => 2,
+		    -sticky => "nse");
+    my $pwdfield = $dialog->add('Entry', 
+				-width => 8, @co, @fieldpadding,
+				-exportselection => 1,
+				-highlightthickness => 1,
+				-takefocus => 1,
+				-show => '.',
+				-textvariable => \$password);
+    $pwdfield->grid(-row => 3,
+		    -column => 3,
+		    -sticky => "nsw");
+    #$dialog->toplevel->overrideredirect(1);
+    $dialog->toplevel->configure(@co, @padding);
+    $userfield->focus;
+    my $button = $dialog->Show;
+    if ($button eq "Abort") {
+	return (undef,undef);
+    } else {
+	return ($user, $password);
+    }
+}
+
+$window->update;
+
+&fetchFile($url);
+&configBack("disabled");
+
+MainLoop;
+
+__END__
+
+=head1 NAME
+
+wApua - web browser for WAP WML pages
+
+=head1 SYNOPSIS
+
+=over 0
+
+=item wApua [-f I<configfile>] [-d I<debuglevel>] [I<starturl>]
+
+=item wApua (-h|--help|--usage)
+
+=back
+
+=head1 DESCRIPTION
+
+wApua is a browser for WAP (Wireless Application Protocol) pages
+written in the Wireless Markup Language (WML). It supports WML 1.1 and
+1.2 except forms.
+
+It is written in Perl and uses the Perl/Tk library for its GUI and
+libwww-perl for the network parts. So it supports all transport
+protocols, libwww-perl (LWP) supports.
+
+=head1 OPTIONS
+
+=over 25
+
+=item -h, --help, --usage
+
+Shows a summary of options.
+
+=item -v,  --version
+
+Shows the version of wApua.
+
+=item -d I<n>, --debug=I<n>
+
+Sets the level of debug output to I<n>.
+
+=back
+
+=head1 CONFIGURATION
+
+The system-wide default configuration can be changed in wApua::Config
+
+Per-user configuration can be done by creating a F<.wApuarc> file on
+Linux and other UNIX derivatives or clones or a F<wApua.ini> file on
+Windows and MacOS 9 in your home directory.
+
+See the example configuration F<wApua.rc> which comes with wApua.
+
+=head1 SEE ALSO
+
+L<wbmp2xbm(1p)>, L<LWP(3pm)>.
+
+The wApua FAQ at L<http://fsinfo.cs.uni-sb.de/~abe/wApua/FAQ.html>
+
+=head1 KNOWN BUGS
+
+=over 4
+
+=item Under some not yet exactly known circumstances, fetching a
+document from the internal cache takes very long.
+
+=back
+
+=head1 TODO
+
+=over 4
+
+=item Supporting WML forms
+
+=item Global configuration file
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (c) 2000, 2006 by Axel Beckert <wapua@deuxchevaux.org>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02111-1301,
+USA.
+
+On Debian systems, the complete text of the GNU General Public License
+can be found in /usr/share/common-licenses/GPL. It also came with
+wApua in the file F<COPYING>.
+
+=head1 AUTHOR
+
+wApua was written by Axel Beckert <wapua@deuxchevaux.org>
+
+=head1 THANKS
+
+Thanks to Jindra Vavruska <ok1fou@yahoo.com> for many bug reports and
+suggestions.

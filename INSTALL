@@ -1,0 +1,100 @@
+----------------------------------------------------------------------
+			  wApua Installation
+----------------------------------------------------------------------
+
+==========================================
+Short installation instructions for wApua:
+==========================================
+
+Install libwww-perl (at least 5.47 or newer should work) and perl/Tk
+(at least 800.019 or newer should work; version 400.xxx does not
+work). Get wApua (e.g. at http://fsinfo.cs.uni-sb.de/~abe/wApua/) and
+do
+
+	> tar xzf wApua-latest.tar.gz
+	> cd wApua-x.yz
+
+Then configure wApua's system wide defaults by editing wApua/Config.pm
+(you can always configure them in you .wApua.rc, too) and do
+
+	> perl Makefile.PL
+	> make
+	> su
+	# make install
+
+Copy wApua.rc to ~/.wApua.rc and change it according to your
+preferences.
+
+==================================================
+More detailed installation instructions for wApua:
+==================================================
+
+Get libwww-perl (aka LWP, at least version 5.47) from
+http://www.linpro.no/lwp/
+
+For installing libwww-perl, you'll usually also need the following
+PERL modules, you'll get them from the shown URLs:
+
+  - URI (http://www.perl.com/cgi-bin/cpan_mod?module=URI)
+  - HTML::Parser (http://www.perl.com/cgi-bin/cpan_mod?module=HTML::Parser)
+  - MIME::Base64 (http://www.perl.com/cgi-bin/cpan_mod?module=MIME::Base64)
+  - Net::FTP (from libnet, http://www.perl.com/cgi-bin/cpan_mod?module=Net::FTP)
+
+Then get perl/Tk 800 (aka pTk, perl/Tk 400 will not work! Version
+800.019 should be fine...). You'll get the most actual version at
+http://www.perl.com/cgi-bin/cpan_mod?module=Tk.
+
+Install them all according to their installation instructions. It
+should be a good idea to install libwww-perl as the last of them.
+
+Maybe they're already installed or are available as package of your
+favourite package manager.
+
+Get the latest wApua from http://fsinfo.cs.uni-sb.de/~abe/wApua/ and
+unpack the tar ball with
+
+	> tar xzf wApua-latest.tar.gz
+
+or, if no GNU tar is available, with
+
+	> zcat wApua-latest.tar.gz | tar -xf -
+
+Then
+
+	> cd wApua-x.yz
+
+where x.yz should be the version number. You may want to configure
+system wide default settings for wApua by editing wApua/Config.pm
+now. Then create a 'Makefile' with
+
+	> perl Makefile.PL
+
+and run
+
+	> make
+
+After that, you probably want to make some 
+
+	> su
+
+to gain root access and then install wApua by running
+
+	# make install
+
+If you don't have root access and want to install wApua locally, the
+last four steps should be replaced by something like this:
+
+	> perl Makefile.PL PREFIX=~ LIB=~/lib
+	> make install
+
+[Due to wApua not yet being at CPAN (because of lack of
+ documentation), an installation using the CPAN module is not yet
+ possible.]
+
+Hope, you'll find wApua useful.
+
+       Have fun! Axel.
+
+# Local Variables: 
+# mode: text
+# End: 

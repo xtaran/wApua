@@ -1,0 +1,24 @@
+bin/wApua
+bin/wbmp2xbm
+wApua/About.pm
+wApua/Phone.pm
+wApua/Cache.pm
+wApua/Config.pm
+wApua/History.pm
+wApua/Helpers.pm
+wApua/WBMP2XBM.pm
+wApua/UserAgent.pm
+wApua/images/wApua.wbmp
+wApua/images/home.wbmp
+wApua/images/back.wbmp
+wApua/images/forward.wbmp
+wApua/images/reload.wbmp
+wApua/images/stop.wbmp
+COPYING
+README
+CHANGES
+MANIFEST
+Makefile.PL
+INSTALL
+wApua.rc
+META.yml                                 Module meta-data (added by MakeMaker)
