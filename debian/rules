@@ -41,7 +41,7 @@ install: build
 
 	$(MAKE) install DESTDIR=$(DESTDIR)
 	# Remove directories unnecessarily created by ExtUtils::MakeMaker
-	rmdir $(DESTDIR)/usr/lib/perl5 $(DESTDIR)/usr/lib
+	[ ! -d $(DESTDIR)/usr/lib/perl5 ] || rmdir --ignore-fail-on-non-empty --parents --verbose $(DESTDIR)/usr/lib/perl5
 
 # Build architecture-independent files
 binary-indep: build install
