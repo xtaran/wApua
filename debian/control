@@ -2,7 +2,7 @@ Source: wapua
 Section: web
 Priority: optional
 Maintainer: Axel Beckert <abe@deuxchevaux.org>
-Build-Depends: debhelper (>= 6)
+Build-Depends: debhelper (>= 7)
 Standards-Version: 3.8.3
 Homepage: http://fsinfo.noone.org/~abe/wApua/
 Vcs-Browser: http://git.noone.org/?p=wapua.git
