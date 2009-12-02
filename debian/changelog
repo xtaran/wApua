@@ -6,6 +6,8 @@ wapua (0.06-2) UNRELEASED; urgency=low
     + [debian/control] added Homepage header
     + [debian/control] added Vcs-* header
     + [debian/control] Remove dependency on perl >= 5.6.0-16
+  * Bumped debhelper compatibility to 6
+    + [debian/rules] replaced "dh_clean -k" with "dh_prep"
   * Fixed further Lintian warnings:
     + [debian/copyright] copyright-without-copyright-notice
     + [debian/rules] debian-rules-ignores-make-clean-error
