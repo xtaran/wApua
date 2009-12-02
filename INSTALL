@@ -8,7 +8,7 @@ Short installation instructions for wApua:
 
 Install libwww-perl (at least 5.47 or newer should work) and perl/Tk
 (at least 800.019 or newer should work; version 400.xxx does not
-work). Get wApua (e.g. at http://fsinfo.cs.uni-sb.de/~abe/wApua/) and
+work). Get wApua (e.g. at http://fsinfo.noone.org/~abe/wApua/) and
 do
 
 	> tar xzf wApua-latest.tar.gz
@@ -50,7 +50,7 @@ should be a good idea to install libwww-perl as the last of them.
 Maybe they're already installed or are available as package of your
 favourite package manager.
 
-Get the latest wApua from http://fsinfo.cs.uni-sb.de/~abe/wApua/ and
+Get the latest wApua from http://fsinfo.noone.org/~abe/wApua/ and
 unpack the tar ball with
 
 	> tar xzf wApua-latest.tar.gz

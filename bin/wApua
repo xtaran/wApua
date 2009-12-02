@@ -1737,7 +1737,7 @@ See the example configuration F<wApua.rc> which comes with wApua.
 
 L<wbmp2xbm(1p)>, L<LWP(3pm)>.
 
-The wApua FAQ at L<http://fsinfo.cs.uni-sb.de/~abe/wApua/FAQ.html>
+The wApua FAQ at L<http://fsinfo.noone.org/~abe/wApua/FAQ.html>
 
 =head1 KNOWN BUGS
 

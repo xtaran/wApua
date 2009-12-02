@@ -128,7 +128,7 @@ sub readConfig {
     $CONFIG{HomeButton} = "home.wbmp";
     $CONFIG{StopButton} = "stop.wbmp";
     $CONFIG{LogoButton} = "wApua.wbmp";
-    $CONFIG{LogoURL} = "http://fsinfo.cs.uni-sb.de/~abe/wApua/index.wml";
+    $CONFIG{LogoURL} = "http://fsinfo.noone.org/~abe/wApua/index.wml";
     $CONFIG{ButtonDirectory} = "wApua/images"; 
         # Use absolute for paths outside @INC;
 
@@ -163,7 +163,7 @@ sub readConfig {
     $CONFIG{ActiveBorderWidth} = 2;
 
 # Start URL and HTTP headers
-    $CONFIG{HomeURL} = "http://fsinfo.cs.uni-sb.de/~abe/wApua/index.wml";
+    $CONFIG{HomeURL} = "http://fsinfo.noone.org/~abe/wApua/index.wml";
     $CONFIG{HTTP_Accept} = 
 	"text/vnd.wap.wml; q=1.0, text/plain; q=0.5, image/vnd.wap.wbmp; level=0";
     $CONFIG{HTTP_Accept_Image} = "image/vnd.wap.wbmp; level=0";
