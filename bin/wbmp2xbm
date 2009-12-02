@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 
-my $VERSION = "0.06";
+my $VERSION = '0.06.1';
+my $COPYRIGHT = '(C) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>';
 
-# Copyright (c) 2000, 2006 by Axel Beckert <abe@deuxchevaux.org>
+# Copyright (c) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -45,7 +46,7 @@ EOT
 }
 
 sub version {
-    print "$basename $VERSION (C) 2000, 2006 Axel Beckert <wapua\@deuxchevaux.org>\n";
+    print "$basename $VERSION $COPYRIGHT\n";
 }
 
 unless (@ARGV) {
@@ -60,7 +61,7 @@ foreach (@ARGV) {
     }
 
     if (/^(-V|--version)$/) {
-	print "$0 $VERSION (C) 2000, 2006 Axel Beckert <wapua\@deuxchevaux.org>\n";
+	print "$0 $VERSION  $COPYRIGHT\n";
         exit 0;
     }
 
@@ -107,7 +108,7 @@ wbmp2xbm - converts WBMP to XBM
 
 =head1 SYNOPSIS
 
-=over 0
+=over 1
 
 =item wbmp2xbm [-v|--verbose] [--debug=I<n>] F<file.wbmp> F<...>
 
@@ -152,7 +153,7 @@ The wApua FAQ at L<http://fsinfo.cs.uni-sb.de/~abe/wApua/FAQ.html>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2000, 2006 by Axel Beckert <wapua@deuxchevaux.org>
+Copyright (C) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

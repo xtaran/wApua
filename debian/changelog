@@ -1,5 +1,7 @@
-wapua (0.06-2) UNRELEASED; urgency=low
+wapua (0.06.1-1) UNRELEASED; urgency=low
 
+  * New upstream release
+    + Fixes POD errors
   * Acknowledge NMU
   * Bumped Standards-Version to 3.8.3
     + [debian/menu] changed menu section

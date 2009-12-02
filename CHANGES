@@ -2,6 +2,12 @@
 			   wApua ChangeLog
 ----------------------------------------------------------------------
 
+0.06 to 0.06.1:
+
+  + Fixed POD errors in wApua and wbmp2xpm
+  + Minor cosmetic changes to unify comments, e-mail addresss and
+    copyright statements
+
 0.05.1 to 0.06:
 
   + Slight overhaul over nearly all files
