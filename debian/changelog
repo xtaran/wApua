@@ -1,4 +1,4 @@
-wapua (0.06.1-1) UNRELEASED; urgency=low
+wapua (0.06.1-1) unstable; urgency=low
 
   * New upstream release
     + Fixes POD errors
