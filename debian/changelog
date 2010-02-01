@@ -1,3 +1,11 @@
+wapua (0.06.1-2) unstable; urgency=low
+
+  * Added ${misc:Depends} to Depends (fixes Lintian warning)
+  * Changed the maintainer e-mail address to my debian.org address.
+  * Bumped Standards-Version to 3.8.4 (no changes)
+
+ -- Axel Beckert <abe@debian.org>  Mon, 01 Feb 2010 01:05:58 +0100
+
 wapua (0.06.1-1) unstable; urgency=low
 
   * New upstream release
