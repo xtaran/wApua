@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 9~)
 Standards-Version: 3.8.4
 Homepage: http://fsinfo.noone.org/~abe/wApua/
 Vcs-Browser: http://git.noone.org/?p=wapua.git
-Vcs-Git: http://git.noone.org/wapua.git/
+Vcs-Git: git://git.noone.org/wapua.git
 
 Package: wapua
 Architecture: all
