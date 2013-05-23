@@ -5,6 +5,7 @@ wapua (0.06.1-3) UNRELEASED; urgency=low
   * Switch to a dh7 style debian/rules file:
     + dh_{link,install{docs,examples}}: Use files instead of parameters
   * Switch to source format "3.0 (quilt)"
+  * Fix lintian warning copyright-refers-to-symlink-license
 
  -- Axel Beckert <abe@debian.org>  Fri, 24 May 2013 01:28:47 +0200
 
