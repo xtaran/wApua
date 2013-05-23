@@ -10,8 +10,13 @@ Vcs-Git: git://git.noone.org/wapua.git
 
 Package: wapua
 Architecture: all
-Depends: ${perl:Depends}, ${misc:Depends}, libwww-perl, perl-tk, libhtml-parser-perl
-Suggests: wap-wml-tools, html2wml
+Depends: libhtml-parser-perl,
+         libwww-perl,
+         perl-tk,
+         ${misc:Depends},
+         ${perl:Depends}
+Suggests: html2wml,
+          wap-wml-tools
 Description: Web browser for WAP WML pages
  wApua is a web browser for browsing WAP (Wireless Application
  Protocol) pages written in the Wireless Markup Language (WML;
