@@ -1,4 +1,4 @@
-wapua (0.06.1-3) UNRELEASED; urgency=low
+wapua (0.06.1-3) unstable; urgency=low
 
   * Bump debhelper compatibility to 9
     + Update versioned debhelper build-dependency
@@ -10,7 +10,7 @@ wapua (0.06.1-3) UNRELEASED; urgency=low
   * Change Vcs-Git from http:// to git://
   * Apply wrap-and-sort
 
- -- Axel Beckert <abe@debian.org>  Fri, 24 May 2013 01:28:47 +0200
+ -- Axel Beckert <abe@debian.org>  Fri, 24 May 2013 01:54:47 +0200
 
 wapua (0.06.1-2) unstable; urgency=low
 
