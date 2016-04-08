@@ -3,7 +3,7 @@ Section: web
 Priority: optional
 Maintainer: Axel Beckert <abe@debian.org>
 Build-Depends: debhelper (>= 9~)
-Standards-Version: 3.9.4
+Standards-Version: 3.9.7
 Homepage: https://fsinfo.noone.org/~abe/wApua/
 Vcs-Browser: https://git.noone.org/?p=wapua.git
 Vcs-Git: git://git.noone.org/wapua.git
