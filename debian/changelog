@@ -2,6 +2,7 @@ wapua (0.06.2-1) UNRELEASED; urgency=medium
 
   * New upstream release.
     + Fixes deprecation warnings with Perl 5.22.
+  * Switch Vcs-Browser and Homepage header from http:// to https://.
 
  -- Axel Beckert <abe@debian.org>  Fri, 08 Apr 2016 02:07:29 +0200
 
