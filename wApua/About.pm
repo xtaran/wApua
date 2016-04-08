@@ -1,6 +1,6 @@
 package wApua::About;
 
-# Copyright (C) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>
+# Copyright (C) 2000, 2006, 2009, 2016 by Axel Beckert <wapua@deuxchevaux.org>
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ sub new {
     my $TokeParserVersion = $HTML::TokeParser::VERSION;
     my $ParserVersion     = $HTML::Parser::VERSION;
     my $TkVersion  = $Tk::VERSION;
-    my $date       = localtime($);
+    my $date       = localtime($^T);
     my $imgloc     = "file://".&findINC('wApua/images/wApua.wbmp');
     $self->{about} = <<EOF;
 <wml>
@@ -105,9 +105,9 @@ browsing the WML pages on the web.
 EOF
 
 my $helpwml = "<tr><td>";
-$helpwml .= "Alt-F4, Meta-F4, " unless $ eq "MacOS";
+$helpwml .= "Alt-F4, Meta-F4, " unless $^O eq "MacOS";
 $helpwml .= "[%-Q]</td><td>Exit $version</td></tr>\n<tr><td>";
-$helpwml .= "Again, L2, " unless $ eq "MSWin32" or $ eq "MacOS";
+$helpwml .= "Again, L2, " unless $^O eq "MSWin32" or $^O eq "MacOS";
 $helpwml .= "[%-R]</td><td>Reload actual page</td></tr>\n";
 
 $helpwml .= <<EOF;
@@ -132,7 +132,7 @@ $helpwml =~ s/\[%-([^][]*)\]/eval($commandwml)/egs;
 $self->{about} .= $helpwml;
 
 $self->{about} .= "<tr><td>Props, L3</td><td>Opens the program environment page (<a href='about:#info'>about:\#info</a>)</td></tr>\n"
-    unless ($ eq "MSWin32" or $ eq "MacOS");
+    unless ($^O eq "MSWin32" or $^O eq "MacOS");
 
 $self->{about} .= <<EOF;
 </table></small>
@@ -264,14 +264,14 @@ You can download the actual version of wApua at the wApua Home Page.
 
 <table columns='2'>
 <tr><td><b>Program name:</b></td><td>$0</td></tr>
-<tr><td><b>Running PERL version:</b></td><td>$] ($)</td></tr>
+<tr><td><b>Running PERL version:</b></td><td>$] ($^X)</td></tr>
 <tr><td><b>Running libwww-perl version:</b></td><td>$LWPversion</td></tr>
 <tr><td><b>Running HTML::Parser version:</b></td><td>$ParserVersion</td></tr>
 <tr><td><b>Running HTML::TokeParser version:</b></td><td>$TokeParserVersion</td></tr>
 <tr><td><b>Running URI version:</b></td><td>$URIversion</td></tr>
 <tr><td><b>Running perl/Tk version:</b></td><td>$TkVersion</td></tr>
 <tr><td><b>Process id:</b></td><td>$$</td></tr>
-<tr><td><b>OS type:</b></td><td>$</td></tr>
+<tr><td><b>OS type:</b></td><td>$^O</td></tr>
 <tr><td><b>Program start:</b></td><td>$date</td></tr>
 <tr><td><b>User id:</b></td><td>$< ($>)</td></tr>
 <tr><td><b>Group ids:</b></td><td>$( ($))</td></tr>

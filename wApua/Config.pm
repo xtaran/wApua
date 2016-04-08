@@ -1,6 +1,6 @@
 package wApua::Config;
 
-# Copyright (C) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>
+# Copyright (C) 2000, 2006, 2009, 2016 by Axel Beckert <wapua@deuxchevaux.org>
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -75,16 +75,16 @@ sub readConfig {
 
 # Keys
     $CONFIG{ModKeys} = "Alt Meta Control";
-    $CONFIG{ModKeys} = "Alt Control" if ($ eq "MSWin32");
-    $CONFIG{ModKeys} = "Command" if ($ eq "MacOS");
+    $CONFIG{ModKeys} = "Alt Control" if ($^O eq "MSWin32");
+    $CONFIG{ModKeys} = "Command" if ($^O eq "MacOS");
 
     $CONFIG{DefaultModKey} = "Meta";
-    $CONFIG{DefaultModKey} = "Control" if ($ eq "MSWin32");
-    $CONFIG{DefaultModKey} = "Command" if ($ eq "MacOS");
+    $CONFIG{DefaultModKey} = "Control" if ($^O eq "MSWin32");
+    $CONFIG{DefaultModKey} = "Command" if ($^O eq "MacOS");
 
     $CONFIG{HelpKey} = "Help";
-    $CONFIG{HelpKey} = "F1" if ($ eq "MSWin32");
-    $CONFIG{HelpKey} = "F1" if ($ eq "MacOS");
+    $CONFIG{HelpKey} = "F1" if ($^O eq "MSWin32");
+    $CONFIG{HelpKey} = "F1" if ($^O eq "MacOS");
 	# Anyone knows what keysym some key for help on Macs has?
 
 # Fonts
@@ -249,7 +249,7 @@ EOT
     @ARGV = @commandline;
 
     unless ($self->{configfile}) {
-	my @configfiles = ($ =~ /^(MSWin32|MacOS)$/ ?
+	my @configfiles = ($^O =~ /^(MSWin32|MacOS)$/ ?
 			   ($ENV{"HOME"}."/.wApua.rc",
 			    $ENV{"HOME"}."/.wApuarc",
 			    $ENV{"HOME"}."/.wapua.rc",

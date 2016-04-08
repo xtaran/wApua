@@ -1,6 +1,6 @@
 package wApua::UserAgent;
 
-# Copyright (C) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>
+# Copyright (C) 2000, 2006, 2009, 2016 by Axel Beckert <wapua@deuxchevaux.org>
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -37,7 +37,7 @@ sub new {
     my $self = new LWP::UserAgent;
     shift;
     # I hate OS names written all in lower case... *g*
-    my$os=($=~/[A-Z]/?$:"\u$");
+    my$os=($^O=~/[A-Z]/?$^O:"\u$^O");
     $os="SunOS" if $os=~/^sunos$/i;
     $os=~s/^(.*)bsd$/\u$ {1}BSD/i;
     $self->agent(shift()." (PERL/$]; lwp/".$LWP::VERSION."; ".

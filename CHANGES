@@ -2,6 +2,11 @@
 			   wApua ChangeLog
 ----------------------------------------------------------------------
 
+0.06.1 to 0.06.2:
+
+  + Fixed deprecation warnings with Perl 5.22 about using literal
+    control characters in variable names.
+
 0.06 to 0.06.1:
 
   + Fixed POD errors in wApua and wbmp2xpm
