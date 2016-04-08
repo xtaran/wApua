@@ -1,4 +1,4 @@
-wapua (0.06.2-1) UNRELEASED; urgency=medium
+wapua (0.06.2-1) unstable; urgency=medium
 
   * New upstream release.
     + Fixes deprecation warnings with Perl 5.22.
@@ -8,7 +8,7 @@ wapua (0.06.2-1) UNRELEASED; urgency=medium
     copyright years.
   * Add upstream signing key and tell debian/watch where to look for it.
 
- -- Axel Beckert <abe@debian.org>  Fri, 08 Apr 2016 02:07:29 +0200
+ -- Axel Beckert <abe@debian.org>  Sat, 09 Apr 2016 01:30:28 +0200
 
 wapua (0.06.1-3) unstable; urgency=low
 
