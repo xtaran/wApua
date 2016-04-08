@@ -1,30 +1,32 @@
---- #YAML:1.0
-name:               wApua
-version:            0.06.1
-abstract:           ~
-author:  []
-license:            unknown
-distribution_type:  module
-configure_requires:
-    ExtUtils::MakeMaker:  0
+---
+abstract: unknown
+author:
+  - unknown
 build_requires:
-    ExtUtils::MakeMaker:  0
-requires:
-    HTML::Parser:      2.99_06
-    HTML::TokeParser:  ~
-    LWP:               5.47
-    LWP::UserAgent:    ~
-    Tk:                800.000
-    Tk::ROText:        ~
-    URI:               1.03
-    URI::Escape:       ~
-    URI::file:         ~
-    URI::Heuristic:    ~
-no_index:
-    directory:
-        - t
-        - inc
-generated_by:       ExtUtils::MakeMaker version 6.55_02
+  ExtUtils::MakeMaker: '0'
+configure_requires:
+  ExtUtils::MakeMaker: '0'
+dynamic_config: 1
+generated_by: 'ExtUtils::MakeMaker version 7.0401, CPAN::Meta::Converter version 2.150005'
+license: unknown
 meta-spec:
-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
-    version:  1.4
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: '1.4'
+name: wApua
+no_index:
+  directory:
+    - t
+    - inc
+requires:
+  HTML::Parser: 2.99_06
+  HTML::TokeParser: '0'
+  LWP: '5.47'
+  LWP::UserAgent: '0'
+  Tk: '800.000'
+  Tk::ROText: '0'
+  URI: '1.03'
+  URI::Escape: '0'
+  URI::Heuristic: '0'
+  URI::file: '0'
+version: v0.06.2
+x_serialization_backend: 'CPAN::Meta::YAML version 0.018'
