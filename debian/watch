@@ -1,2 +1,3 @@
 version=3
+opts=pgpsigurlmangle=s/$/.asc/ \
 http://fsinfo.noone.org/~abe/wApua/Download.html wApua-([\d\.]*).tar.gz

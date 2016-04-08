@@ -6,6 +6,7 @@ wapua (0.06.2-1) UNRELEASED; urgency=medium
   * Declare compliance with Debian Policy 3.9.7. (No changes needed.)
   * Convert debian/copyright to machine-readable DEP5 format and update
     copyright years.
+  * Add upstream signing key and tell debian/watch where to look for it.
 
  -- Axel Beckert <abe@debian.org>  Fri, 08 Apr 2016 02:07:29 +0200
 
