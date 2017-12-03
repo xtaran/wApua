@@ -22,9 +22,9 @@ Description: Web browser for WAP WML pages
  wApua is a web browser for browsing WAP (Wireless Application
  Protocol) pages written in the Wireless Markup Language (WML;
  versions 1.1 and 1.2 are supported). Its main purpose is to test or
- surf WAP pages without connecting with a WAP capable mobile phone,
- which may be expensive or impossible, i.e. in case of WAP pages on
- the local filesystem.
+ surf WAP pages locally or over HTTP and HTTPS without connecting with
+ a WAP capable mobile phone, which may be expensive or impossible,
+ i.e. in case of WAP pages on the local filesystem.
  .
  wApua is written in Perl using libwww-perl and Perl/Tk.
  .

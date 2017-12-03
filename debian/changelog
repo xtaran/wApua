@@ -7,6 +7,7 @@ wapua (0.06.3-1) UNRELEASED; urgency=medium
   * Also use HTTPS in debian/watch.
   * Set "Rules-Requires-Root: no".
   * Switch Vcs-Git to HTTPS.
+  * Mention HTTP/HTTPS in long package description.
 
  -- Axel Beckert <abe@debian.org>  Thu, 16 Nov 2017 01:24:48 +0100
 
