@@ -1,6 +1,7 @@
 wapua (0.06.3-1) UNRELEASED; urgency=medium
 
   * New upstream release.
+    + Update debian/docs to install README.md instead of README.
   * Declare compliance with Debian Policy 4.1.2.
     + debian/copyright: Switch DEP5 format URL to HTTPS.
   * Also use HTTPS in debian/watch.
