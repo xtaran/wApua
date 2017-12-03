@@ -1067,7 +1067,42 @@ sub useFetched {
 	    $imagedimension = &insertImage($content,$url,$browser);
 #	    $browser->configure(-cursor => $textcursor);
 	    #$wait = 0;
-	} elsif ($seite !~ m(^\s*(<.*>)?\s*<!DOCTYPE wml PUBLIC [\"\']-//(WAPFORUM|PHONE\.COM)//DTD WML 1\.[1-3]//EN[\"\']\s+[\"\']([^<>\"]*)[\"\']\s*>\s*<)is) {
+	} elsif ($seite !~ m{
+                 ^\s*
+
+                 # <?xml version="1.0"?> and <?xml-stylesheet href="wml.css" type="text/css" ?>
+                 (<.*>)?
+                 \s*
+
+                 # <!DOCTYPE wml PUBLIC
+                 <!DOCTYPE
+                 \s+
+                 wml
+                 \s+
+                 PUBLIC
+                 \s+
+
+                 # "-//WAPFORUM//DTD WML 1.1//EN"
+                 [\"\']-//(WAPFORUM|PHONE\.COM)//DTD
+                 \s+
+                 WML
+                 \s+
+                 1\.[1-3]//EN
+                 [\"\']
+                 \s+
+
+                 # DTD URL with quotes, e.g.
+                 # "http://www.wapforum.org/DTD/wml_1.1.xml"
+
+                 [\"\']
+                 ([^<>\"]*)[\"\']
+
+                 # End of preamble
+                 \s*
+                 >
+                 \s*
+                 <
+            }isx) {
 	    $browser->configure(-wrap => "none");
 	    $browser->delete("0.0","end");
 	    $browser->insert("end", "No WML page:\n" => "error-bold",
