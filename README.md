@@ -40,7 +40,7 @@ See the source code of wApua/Config.pm for configuration possibilities
 (colors, fonts, home page, paths, etc.). Every hash-key used there,
 can also be used in you configuration file ~/.wApua.rc. In addition to
 that, every key (in the configuration file and Config.pm) beginning
-with "HTTP_" is treated as HTTP header, which will be added to every
+with `HTTP_` is treated as HTTP header, which will be added to every
 request, that wApua makes. (There is one exception: HTTP_Accept_Images
 is the HTTP Accept header for retrieving images). See the file
 wApua.rc for examples and an alternative coloring scheme.
@@ -51,18 +51,18 @@ Starting wApua
 * If you start wApua without any options, wApua will start with the
   home page configured in Config.pm or .wApua.rc.
 
-* Starting wApua with "wApua -f <config-file>" will start wApua and
-  read the configuration from <config-file>. If you want to suppress
-  the reading of .wApua.rc, start wApua with "wApua -f /dev/null".
-  You may also start wApua with "wApua -f -" and it will read the
-  configuration from STDIN.
+* Starting wApua with `wApua -f <config-file>` will start wApua and
+  read the configuration from `<config-file>`. If you want to suppress
+  the reading of .wApua.rc, start wApua with `wApua -f /dev/null`.
+  You may also start wApua with `wApua -f -` and it will read the
+  configuration from `STDIN`.
 
 * Any other command line parameter will be regarded as (more or
   less) complete URL. If it's the name of an existing file, it will
   be loaded, otherwise wApua will look up if it's a hostname and
-  after that being unsuccessful it will try to add some "www." in
-  front and some ".com" at the end...  (Most heuristics done by
-  URI::Heuristics.)
+  after that being unsuccessful it will try to add some `www.` in
+  front and some `.com` at the end...  (Most heuristics done by
+  `URI::Heuristics`.)
 
 The latest versions and much more information about wApua can be found
 at the [wApua Home Page][2] and at [Freshmeat][3].
@@ -76,7 +76,7 @@ welcome.
 
 Hope, you find it useful.
 
-       Have fun! Axel.
+Have fun! Axel.
 
 
 [1]: http://www.heise.de/ix/forum/go.shtml?list=1&g=952686372_61
