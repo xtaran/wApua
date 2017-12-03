@@ -1,0 +1,17 @@
+# Editor backup files, etc.
+*~
+
+# Perl build artefacts
+/blib/
+/Makefile
+/MYMETA.json
+/MYMETA.yml
+/pm_to_blib
+
+# Debian build artefacts
+/debian/.debhelper/
+/debian/files
+/debian/*.debhelper.log
+/debian/*.debhelper
+/debian/*.substvars
+/debian/wapua/
