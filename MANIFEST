@@ -15,7 +15,7 @@ wApua/images/forward.wbmp
 wApua/images/reload.wbmp
 wApua/images/stop.wbmp
 COPYING
-README
+README.md
 CHANGES
 MANIFEST
 Makefile.PL
