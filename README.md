@@ -27,10 +27,10 @@ History
 -------
 
 wApua was developed because of frustration about commercial WML
-browsers (WinWAP et al), that didn't fit my requirements. In addition
-to that, none of them was able to run under diverse Unices, especially
-SunOS and Solaris, which were used as work-stations and servers at
-university.
+browsers ([WinWAP](https://en.wikipedia.org/wiki/WinWAP) et al), that
+didn't fit my requirements. In addition to that, none of them was able
+to run under diverse Unices, especially SunOS and Solaris, which were
+used as work-stations and servers at university.
 
 And those online WML to HTML converters are slow and not very useful
 for debugging WML pages.
