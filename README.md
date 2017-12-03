@@ -41,9 +41,9 @@ See the source code of wApua/Config.pm for configuration possibilities
 can also be used in you configuration file ~/.wApua.rc. In addition to
 that, every key (in the configuration file and Config.pm) beginning
 with `HTTP_` is treated as HTTP header, which will be added to every
-request, that wApua makes. (There is one exception: HTTP_Accept_Images
+request, that wApua makes. (There is one exception: `HTTP_Accept_Images`
 is the HTTP Accept header for retrieving images). See the file
-wApua.rc for examples and an alternative coloring scheme.
+`wApua.rc` for examples and an alternative coloring scheme.
 
 Starting wApua
 --------------
