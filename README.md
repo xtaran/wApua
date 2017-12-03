@@ -123,6 +123,6 @@ or (at your option) any later version.
 
 [1]: https://web.archive.org/web/20010605003852/http://www.heise.de:80/ix/forum/go.shtml?list=1&g=952686372_61
      (German only)
-[2]: http://fsinfo.noone.org/~abe/wApua/
+[2]: https://fsinfo.noone.org/~abe/wApua/
 [3]: http://freshmeat.net/projects/wapua/
-[4]: http://fsinfo.noone.org/~abe/wApua/index.wml
+[4]: https://fsinfo.noone.org/~abe/wApua/index.wml
