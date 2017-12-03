@@ -115,9 +115,11 @@ Copyright, License and Author
 -----------------------------
 
 wApua is copyright 2001-2017 by Axel Beckert <wapua@deuxchevaux.org>
-and licensed under the GNU General Public License as published by the
-Free Software Foundation, either version 2 or (at your option) any
-later version.
+and licensed under the
+[GNU General Public License](https://www.gnu.org/licenses/gpl) as
+published by the [Free Software Foundation](https://www.fsf.org/),
+either [version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0)
+or (at your option) any later version.
 
 [1]: https://web.archive.org/web/20010605003852/http://www.heise.de:80/ix/forum/go.shtml?list=1&g=952686372_61
      (German only)
