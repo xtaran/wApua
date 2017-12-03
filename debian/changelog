@@ -6,6 +6,7 @@ wapua (0.06.3-1) UNRELEASED; urgency=medium
     + debian/copyright: Switch DEP5 format URL to HTTPS.
   * Also use HTTPS in debian/watch.
   * Set "Rules-Requires-Root: no".
+  * Switch Vcs-Git to HTTPS.
 
  -- Axel Beckert <abe@debian.org>  Thu, 16 Nov 2017 01:24:48 +0100
 
