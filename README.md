@@ -22,6 +22,7 @@ wApua is written in the Perl programming language and uses
 
 For installation see the file `INSTALL`.
 
+
 History
 -------
 
@@ -49,6 +50,7 @@ up [a little website][2] with some information and download
 possiblities, and [announced it on Freshmeat][3] (now named Freecode
 and dead).
 
+
 Features and Standards Support
 ------------------------------
 
@@ -62,10 +64,11 @@ Given that WAP is more dead than
 wApua release intervals so far ranged from a few days to five years,
 the chances are very low that I'll ever add additional features.
 
+
 Configuration
 -------------
 
-wApua supports configuration via a configuration file `~/.wApua.rc`,
+wApua supports configuration via a configuration file `~/.wApua.rc`.
 
 See the source code of `wApua/Config.pm` for configuration
 possibilities (colors, fonts, home page, paths, etc.). Every hash-key
@@ -76,6 +79,7 @@ to every request, that wApua makes. (There is one exception:
 `HTTP_Accept_Images` is the HTTP Accept header for retrieving
 images). See the file `wApua.rc` for examples and an alternative
 coloring scheme.
+
 
 Starting wApua
 --------------
@@ -96,13 +100,14 @@ Starting wApua
   front and some `.com` at the end...  (Most heuristics done by
   `URI::Heuristics`.)
 
+
 Download
 --------
 
 The latest versions and much more information about wApua can be found
 at the [wApua Home Page][2] and at [Freshmeat][3].
 
-You may also try [wApua's WAP WML page][4] with some WAP
+You may also try [wApua's WAP WML page][4] with some WML
 browser... :-)
 
 
