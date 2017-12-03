@@ -1070,38 +1070,52 @@ sub useFetched {
 	} elsif ($seite !~ m{
                  ^\s*
 
-                 # <?xml version="1.0"?> and <?xml-stylesheet href="wml.css" type="text/css" ?>
-                 (<.*>)?
-                 \s*
+                 # Optional XML preamble, may appear multiple times,
+                 # e.g. <?xml version="1.0"?> and <?xml-stylesheet
+                 # href="wml.css" type="text/css" ?>
 
-                 # <!DOCTYPE wml PUBLIC
-                 <!DOCTYPE
-                 \s+
-                 wml
-                 \s+
-                 PUBLIC
-                 \s+
+                 (
+                   (?:
+                     <\?xml [^>]* \?>
+                     \s*
+                   )*
+                 )
 
-                 # "-//WAPFORUM//DTD WML 1.1//EN"
-                 [\"\']-//(WAPFORUM|PHONE\.COM)//DTD
-                 \s+
-                 WML
-                 \s+
-                 1\.[1-3]//EN
-                 [\"\']
-                 \s+
+                 # Optional DOCTYPE declaration
 
-                 # DTD URL with quotes, e.g.
-                 # "http://www.wapforum.org/DTD/wml_1.1.xml"
+                 (?:
+                   # <!DOCTYPE wml PUBLIC
+                   <!DOCTYPE
+                   \s+
+                   wml
+                   \s+
+                   PUBLIC
+                   \s+
 
-                 [\"\']
-                 ([^<>\"]*)[\"\']
+                   # "-//WAPFORUM//DTD WML 1.1//EN"
+                   [\"\']-//(WAPFORUM|PHONE\.COM)//DTD
+                   \s+
+                   WML
+                   \s+
+                   1\.[1-3]//EN
+                   [\"\']
+                   \s+
 
-                 # End of preamble
-                 \s*
-                 >
-                 \s*
-                 <
+                   # DTD URL with quotes, e.g.
+                   # "http://www.wapforum.org/DTD/wml_1.1.xml"
+
+                   [\"\']
+                   ([^<>\"]*)
+                   [\"\']
+
+                   # End of DOCTYPE declaration
+                   \s*
+                   >
+                   \s*
+                 )?
+
+                 # Needs to start with "<wml"
+                 <wml
             }isx) {
 	    $browser->configure(-wrap => "none");
 	    $browser->delete("0.0","end");
@@ -1120,8 +1134,11 @@ sub useFetched {
 	    $timer_info = 0;
 	    my $xml = $1;
 	    my $dtd = $3;
-	    warn "Incorrect DTD: $dtd"
-		if $dtd !~ m"http://www\.wapforum\.org/DTD/wml(_.*)?\.xml";
+            if (!defined($dtd) or $dtd =~ /^\s*$/) {
+                warn "No DTD found";
+            } elsif ($dtd !~ m"http://www\.wapforum\.org/DTD/wml(_.*)?\.xml") {
+                warn "Incorrect DTD: $dtd";
+            }
 	    if ($xml =~ /^\s*$/) {
 		warn "Missing XML version tag!";
 	    } elsif ($xml !~ m|<\?xml\sversion=[\"\']\d+\.\d+[\"\'](\s[^<>]*)?\?>|) {
