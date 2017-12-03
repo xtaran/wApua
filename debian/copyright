@@ -3,7 +3,7 @@ Upstream-Name: wApua
 Source: https://fsinfo.noone.org/~abe/wApua/
 
 Files: *
-Copyright: 2000, 2006, 2009, 2016 Axel Beckert <abe@deuxchevaux.org>
+Copyright: 2000, 2006, 2009, 2016, 2017 Axel Beckert <abe@deuxchevaux.org>
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
