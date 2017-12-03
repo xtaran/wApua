@@ -22,8 +22,8 @@ my $COPYRIGHT = '(C) 2000, 2006, 2009 by Axel Beckert <wapua@deuxchevaux.org>';
 # You can reach the author by snail-mail at the following address:
 #
 #  Axel Beckert
-#  Kürbergstrasse 20
-#  8049 Zürich, Switzerland
+#  KÃ¼rbergstrasse 20
+#  8049 ZÃ¼rich, Switzerland
 
 use wApua::WBMP2XBM;
 

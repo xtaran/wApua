@@ -225,7 +225,7 @@ if ((!$textbuttons) && $backxbm->xbm) {
 				  -command => \&back,
 				  @buttonpadding, @co);
 } else {
-    $backbutton = $navbar->Button(-text => '« Back', @co, @buttonpadding,
+    $backbutton = $navbar->Button(-text => "\xAB Back", @co, @buttonpadding,
 				  -command => \&back);
 }
 
@@ -291,7 +291,7 @@ if ((!$textbuttons) && $forwardxbm->xbm) {
 				     -command => \&forward,
 				     @buttonpadding, @co);
 } else {
-    $forwardbutton = $navbar->Button(-text => 'Forward »', @co, @buttonpadding,
+    $forwardbutton = $navbar->Button(-text => "Forward \xBB", @co, @buttonpadding,
 				  -command => \&forward);
 }
 
@@ -1584,7 +1584,7 @@ sub linktype {
 	    $ {$dobuttonsadr}{$doname}->bind('<Any-Enter>' => sub {
 		&textState(URI->new_abs($href,$acturl)->as_string);});
 	} elsif ($tag eq "prev") {
-	    $dolabel = "« Back" if !defined $dolabel or ($dolabel eq "");
+	    $dolabel = "\xAB Back" if !defined $dolabel or ($dolabel eq "");
 	    $ {$dobuttonsadr}{$doname} = $dotags->Button(-text => $dolabel,
 							 -font => $softbuttonfont,
 							 @ci, @buttonpadding,
