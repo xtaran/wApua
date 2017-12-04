@@ -1,4 +1,4 @@
-wapua (0.06.3-1) UNRELEASED; urgency=medium
+wapua (0.06.3-1) unstable; urgency=medium
 
   * New upstream release.
     + Update debian/docs to install README.md instead of README.
@@ -9,7 +9,7 @@ wapua (0.06.3-1) UNRELEASED; urgency=medium
   * Switch Vcs-Git to HTTPS.
   * Mention HTTP/HTTPS in long package description.
 
- -- Axel Beckert <abe@debian.org>  Thu, 16 Nov 2017 01:24:48 +0100
+ -- Axel Beckert <abe@debian.org>  Mon, 04 Dec 2017 01:38:02 +0100
 
 wapua (0.06.2-1) unstable; urgency=medium
 
