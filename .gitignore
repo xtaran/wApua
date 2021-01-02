@@ -15,3 +15,4 @@
 /debian/*.debhelper
 /debian/*.substvars
 /debian/wapua/
+/debian/debhelper-build-stamp
