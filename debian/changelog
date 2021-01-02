@@ -4,6 +4,7 @@ wapua (0.06.3-2) UNRELEASED; urgency=medium
     + Build-depend on "debhelper-compat (= 13)" to replace debian/compat.
   * Bump debian/watch version from 3 to 4.
   * Declare compliance with Debian Policy 4.5.1. (No changes needed.)
+  * Add a DEP-12 debian/upstream/metadata file.
 
  -- Axel Beckert <abe@debian.org>  Sat, 02 Jan 2021 08:15:46 +0100
 

@@ -1,0 +1,9 @@
+# https://wiki.debian.org/UpstreamMetadata
+---
+Homepage: https://fsinfo.noone.org/~abe/wApua/
+Changelog: https://github.com/xtaran/wApua/blob/master/CHANGES
+Repository: https://github.com/xtaran/wApua.git
+Repository-Browse: https://github.com/xtaran/wApua
+Bug-Database: https://github.com/xtaran/wApua/issues
+Bug-Submit: https://github.com/xtaran/wApua/issues/new
+Security-Contact: mailto:abe@deuxchevaux.org
