@@ -9,6 +9,7 @@
   + Anticipatorily also support DTD locations with HTTPS.
   + Update tons of URLs in source code and documentation, switch them
     to HTTPS where possible.
+  + Avoid using a specific encoding in source code.
 
 0.06.2 to 0.06.3:
 

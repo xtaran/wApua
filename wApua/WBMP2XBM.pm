@@ -69,7 +69,7 @@ sub height { # get the height of the given image
 sub dimension { # get the width of the given image
     my $self = shift;
     $self->convert unless $self->{xbm_string};
-    return $self->{width}."×".$self->{height};
+    return $self->{width}."x".$self->{height};
 }
 
 sub convert { # the converter itself, returns 0 if an error occured
