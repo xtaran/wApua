@@ -1,6 +1,7 @@
 wapua (0.06.4-1) UNRELEASED; urgency=medium
 
   * New upstream release.
+  * Declare compliance with Debian Policy 4.6.1. (No changes needed.)
 
  -- Axel Beckert <abe@debian.org>  Mon, 05 Sep 2022 13:26:44 +0200
 
