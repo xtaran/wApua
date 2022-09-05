@@ -2,6 +2,12 @@
 			   wApua ChangeLog
 ----------------------------------------------------------------------
 
+0.06.3 to 0.06.4:
+
+  + Support more recent DTD locations with suffix .dtd and without
+    dots or underscore. Thanks to Lian Begett for the bug report!
+  + Anticipatorily also support DTD locations with HTTPS.
+
 0.06.2 to 0.06.3:
 
   + Support WML pages which start without XML preamble or DOCTYPE

@@ -3,7 +3,7 @@
 package wApua;
 
 my # splitted line for MakeMaker
-$VERSION = "0.06.3";
+$VERSION = "0.06.4";
 
 # Copyright (C) 2000, 2006, 2009, 2016, 2017 by Axel Beckert <wapua@deuxchevaux.org>
 #
@@ -1136,8 +1136,8 @@ sub useFetched {
 	    my $dtd = $3;
             if (!defined($dtd) or $dtd =~ /^\s*$/) {
                 warn "No DTD found";
-            } elsif ($dtd !~ m"http://www\.wapforum\.org/DTD/wml(_.*)?\.xml") {
-                warn "Incorrect DTD: $dtd";
+            } elsif ($dtd !~ m"https?://www\.wapforum\.org/DTD/wml([_0-9.]*)?\.(xml|dtd)") {
+                warn "Unexpected DTD: $dtd";
             }
 	    if ($xml =~ /^\s*$/) {
 		warn "Missing XML version tag!";
