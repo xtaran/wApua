@@ -1,6 +1,6 @@
 package wApua::About;
 
-# Copyright (C) 2000, 2006, 2009, 2016 by Axel Beckert <wapua@deuxchevaux.org>
+# Copyright (C) 2000, 2006, 2009, 2016, 2022 by Axel Beckert <wapua@deuxchevaux.org>
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -184,7 +184,7 @@ pages on the web...
 
 </p><small><p>
 
-<b>Copyright &#xA9; 2000, 2006, 2009 by
+<b>Copyright &#xA9; 2000, 2006, 2009, 2016, 2017, 2022 by
 <a href='http://fsinfo.noone.org/~abe/index.wml'>Axel Beckert</a>
 <a href='mailto:wapua\@deuxchevaux.org'>&lt;wapua\@deuxchevaux.org&gt;</a></b>
 
