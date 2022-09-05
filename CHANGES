@@ -7,6 +7,8 @@
   + Support more recent DTD locations with suffix .dtd and without
     dots or underscore. Thanks to Lian Begett for the bug report!
   + Anticipatorily also support DTD locations with HTTPS.
+  + Update tons of URLs in source code and documentation, switch them
+    to HTTPS where possible.
 
 0.06.2 to 0.06.3:
 

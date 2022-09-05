@@ -6,7 +6,7 @@
 HTTP_Accept_Charset: iso-8859-1; q=1, unicode-1-1; q=0.8
 HTTP_Accept_Language: de; q=1.0, en-gb; q=0.9, en; q=0.8, en-us; q=0.7, nl; q=0.2, fr; q=0.1
 
-HomeURL: http://fsinfo.noone.org/~abe/Links/index.wml
+HomeURL: https://fsinfo.noone.org/~abe/Links/index.wml
 
 Debug: No
 TextButtons: No

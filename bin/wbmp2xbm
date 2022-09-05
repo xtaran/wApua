@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 # PODNAME: wbmp2xbm
 
-my $VERSION = '0.06.1';
-my $COPYRIGHT = '(C) 2000, 2006, 2009, 2017 by Axel Beckert <wapua@deuxchevaux.org>';
+my $VERSION = '0.06.4';
+my $COPYRIGHT = '(C) 2000, 2006, 2009, 2017, 2022 by Axel Beckert <wapua@deuxchevaux.org>';
 
-# Copyright (C) 2000, 2006, 2009, 2017 by Axel Beckert <wapua@deuxchevaux.org>
+# Copyright (C) 2000, 2006, 2009, 2017, 2022 by Axel Beckert <wapua@deuxchevaux.org>
 #
 #  This program is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU General Public License
@@ -150,7 +150,7 @@ Sets the level of debug output to I<n>.
 
 L<wApua(1p)>, L<wbmp2xpm(1)>, L<convert(1)>.
 
-The wApua FAQ at L<http://fsinfo.noone.org/~abe/wApua/FAQ.html>
+The wApua FAQ at L<https://fsinfo.noone.org/~abe/wApua/FAQ.html>
 
 =head1 COPYRIGHT
 

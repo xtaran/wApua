@@ -185,7 +185,7 @@ pages on the web...
 </p><small><p>
 
 <b>Copyright &#xA9; 2000, 2006, 2009, 2016, 2017, 2022 by
-<a href='http://fsinfo.noone.org/~abe/index.wml'>Axel Beckert</a>
+<a href='https://fsinfo.noone.org/~abe/index.wml'>Axel Beckert</a>
 <a href='mailto:wapua\@deuxchevaux.org'>&lt;wapua\@deuxchevaux.org&gt;</a></b>
 
 </p><p>
@@ -230,12 +230,12 @@ Axel Beckert<br/>
 		>&lt;wapua\@deuxchevaux.org&gt;</a></td>
 </tr><tr>
 	<td>WWW:</td>
-	<td><a href='http://abe.home.pages.de/english.html'
-		>http://abe.home.pages.de/english.html</a></td>
+	<td><a href='https://axel.beckert.ch/'
+		>https://axel.beckert.ch/</a></td>
 </tr><tr>
 	<td>WAP:</td>
-	<td><a href='http://fsinfo.noone.org/~abe/index.wml'
-		>http://fsinfo.noone.org/~abe/index.wml</a></td>
+	<td><a href='https://fsinfo.noone.org/~abe/index.wml'
+		>https://fsinfo.noone.org/~abe/index.wml</a></td>
 </tr></table>
 
 </p></small></card><card id='download' title='wApua Download'><p>
@@ -248,12 +248,12 @@ You can download the actual version of wApua at the wApua Home Page.
 
 <table columns='2'><tr>
 	<td>WML version</td>
-	<td><a href='http://fsinfo.noone.org/~abe/wApua/index.wml'
-	    >http://fsinfo.noone.org/~abe/wApua/index.wml</a></td>
+	<td><a href='https://fsinfo.noone.org/~abe/wApua/index.wml'
+	    >https://fsinfo.noone.org/~abe/wApua/index.wml</a></td>
 </tr><tr>
 	<td>HTML version</td>
-	<td><a href='http://fsinfo.noone.org/~abe/wApua/index.html'
-	    >http://fsinfo.noone.org/~abe/wApua/index.html</a></td>
+	<td><a href='https://fsinfo.noone.org/~abe/wApua/index.html'
+	    >https://fsinfo.noone.org/~abe/wApua/index.html</a></td>
 </tr></table>
 
 </p></small></card><card id='info' title='Program environment'><p>

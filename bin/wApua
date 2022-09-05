@@ -971,7 +971,7 @@ sub fetchDirect {
     # SCNR
     if ($url =~ m/^about:42$/i) {
 	textState("Don't panic!");
-	&fetchAddToHistory("http://wap.h2g2.com/");
+	&fetchAddToHistory("https://wap.h2g2.com/");
 	textState("Don't panic!");
 	print STDERR "\n\nDon't panic! ;-)\n\n";
 	return 0;

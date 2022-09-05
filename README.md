@@ -18,7 +18,7 @@ expensive mobile data connection.
 
 wApua is written in the Perl programming language and uses
 [libwww-perl](https://github.com/libwww-perl/libwww-perl) and
-[Perl/Tk](http://www.perltk.org/).
+[Perl/Tk](https://github.com/eserte/perl-tk).
 
 For installation see the file `INSTALL`.
 
@@ -41,8 +41,8 @@ graphical user interfaces. But I haven't seen any Tcl code before,
 because I wrote most of those simple-to-write things in the Perl
 programming langauge. Then I discovered Perl/Tk and only a few days
 later the first usable verison of wApua was ready for debugging
-http://wap.dagstuhl.de/, which was part of my student's job back then
-:-).
+[http://wap.dagstuhl.de/][0], which was part of my student's job back
+then :-).
 
 I worked with wApua for about three or four months. Then someone asked
 at the [Heise WAP Forum][1] for a WAP WML browser for Linux and I set
@@ -121,8 +121,9 @@ published by the [Free Software Foundation](https://www.fsf.org/),
 either [version 2](https://www.gnu.org/licenses/old-licenses/gpl-2.0)
 or (at your option) any later version.
 
+[0]: https://web.archive.org/web/20020126055438/http://wap.dagstuhl.de:80/
 [1]: https://web.archive.org/web/20010605003852/http://www.heise.de:80/ix/forum/go.shtml?list=1&g=952686372_61
      (German only)
 [2]: https://fsinfo.noone.org/~abe/wApua/
-[3]: http://freshmeat.net/projects/wapua/
+[3]: https://web.archive.org/web/20190207232501/http://freshmeat.sourceforge.net/projects/wapua/
 [4]: https://fsinfo.noone.org/~abe/wApua/index.wml
