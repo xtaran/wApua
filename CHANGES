@@ -2,7 +2,7 @@
 			   wApua ChangeLog
 ----------------------------------------------------------------------
 
-0.06.3 to 0.06.4:
+0.06.3 to 0.06.4 (UNRELEASED):
 
   + Support more recent DTD locations with suffix .dtd and without
     dots or underscore. Thanks to Lian Begett for the bug report!
@@ -11,17 +11,17 @@
     to HTTPS where possible.
   + Avoid using a specific encoding in source code.
 
-0.06.2 to 0.06.3:
+0.06.2 to 0.06.3 (04-Dec-2017):
 
   + Support WML pages which start without XML preamble or DOCTYPE
     declaration.
 
-0.06.1 to 0.06.2:
+0.06.1 to 0.06.2 (09-Apr-2016):
 
   + Fixed deprecation warnings with Perl 5.22 about using literal
     control characters in variable names.
 
-0.06 to 0.06.1:
+0.06 to 0.06.1 (02-Dec-2009):
 
   + Fixed POD errors in wApua and wbmp2xpm
   + Minor cosmetic changes to unify comments, e-mail addresss and
@@ -29,7 +29,7 @@
   + Removed trailing and leading whitespaces
   + Updated homepage and other URLs to new location
 
-0.05.1 to 0.06:
+0.05.1 to 0.06 (27-Sep-2006):
 
   + Slight overhaul over nearly all files
   + Removed a lot of debug output which was printed anyway, added 
@@ -51,13 +51,13 @@
   + Input sanitizing, --debug and --verbose flag for wbmp2xbm
   + POD documentation
 
-0.05dev to 0.05.1:
+0.05dev to 0.05.1 (30-Apr-2006):
 
   + Compatibiliy with newer Tk versions, especially 804.027 and above
   + Documentation bugfix for how to install it locally
   + Address change in the license
 
-0.04dev to 0.05dev:
+0.04dev to 0.05dev (11-Sep-2000):
 
   + wApua now reads config files on startup and has much more
     configuration possibilities. For this reason also some default
@@ -104,7 +104,7 @@
   + Fixed again some more bugs in key bindings.
   + Updated a lot in the README file.
  
-0.03dev to 0.04dev:
+0.03dev to 0.04dev (01-Sep-2000):
 
   + Changed the name from "wApua.pl" to "wApua".
   + Added a RAM cache.
@@ -137,7 +137,7 @@
   + Some performance improvements
   + Added an INSTALL file
 
-0.02dev to 0.03dev:
+0.02dev to 0.03dev: (19-Aug-2000)
 
   + Some minor bugfixes on doctype string parsing and menus
   + Added WBMP (Type 0) support and an WBMP to XBM converter for
