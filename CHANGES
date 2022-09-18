@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------
-			   wApua ChangeLog
+                           wApua ChangeLog
 ----------------------------------------------------------------------
 
 0.06.3 to 0.06.4 (UNRELEASED):
@@ -32,10 +32,10 @@
 0.05.1 to 0.06 (27-Sep-2006):
 
   + Slight overhaul over nearly all files
-  + Removed a lot of debug output which was printed anyway, added 
-    debug flags -d and --debug. Use -d 1 for previous default 
+  + Removed a lot of debug output which was printed anyway, added
+    debug flags -d and --debug. Use -d 1 for previous default
     behaviour.
-  + wApua now is more pedantic about command line options and shows a 
+  + wApua now is more pedantic about command line options and shows a
     short help if called with -h, --help or --usage. Same for
     wbmp2xbm.pl.
   + wApua now optionally (see example config) inserts a line break
@@ -66,7 +66,7 @@
   + Added a simple phone URL decoder.
   + Added a right-click popup menu, which needs no further mouse
     movement to activate the history back function
-  + Added a stop button. 
+  + Added a stop button.
   + Added (WBMP based) bitmap navigation buttons. (The old text
     navigation buttons are still available, just say "TextButtons:
     true" in your ~/.wApua.rc
@@ -103,7 +103,7 @@
   + MainWindow is coming up much earlier now.
   + Fixed again some more bugs in key bindings.
   + Updated a lot in the README file.
- 
+
 0.03dev to 0.04dev (01-Sep-2000):
 
   + Changed the name from "wApua.pl" to "wApua".
@@ -152,10 +152,10 @@
   + Fixed bug in MS-Windows and MacOS key bindings
   + Added a README file :-)
 
-0.01dev: 
+0.01dev:
 
   + Initial release.
 
-# Local Variables: 
+# Local Variables:
 # mode: text
-# End: 
+# End:
