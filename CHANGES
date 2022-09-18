@@ -2,7 +2,7 @@
                            wApua ChangeLog
 ----------------------------------------------------------------------
 
-0.06.3 to 0.06.4 (UNRELEASED):
+0.06.3 to 0.06.4 (19-Sep-2022):
 
   + Support more recent DTD locations with suffix .dtd and without
     dots or underscore. Thanks to Lian Begett for the bug report!
