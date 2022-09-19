@@ -223,7 +223,7 @@ Axel Beckert<br/>
 <table columns='2'><tr>
 	<td>Mail:</td>
 	<td>K&#xFC;rbergstrasse 20<br/>
-	    8049 Z&#FC;rich, Switzerland</td>
+	    8049 Z&#xFC;rich, Switzerland</td>
 </tr><tr>
 	<td>E-Mail:</td>
 	<td><a href='mailto:wapua\@deuxchevaux.org'
